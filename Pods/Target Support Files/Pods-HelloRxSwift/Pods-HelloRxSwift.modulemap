@@ -1,0 +1,6 @@
+module Pods_HelloRxSwift {
+  umbrella header "Pods-HelloRxSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}
