@@ -1,5 +1,5 @@
 //
-//  BoxSubjectModel.swift
+//  WeeklySubjectModel.swift
 //  HelloRxSwift
 //
 //  Created by ST_Ben.Huang 黃韋韜 on 2020/3/25.
@@ -8,9 +8,8 @@
 
 import Foundation
 
-struct BoxSubject:Codable {
+struct WeeklySubject:MovieSubject {
     let rank:Int
-    let box:Int
-    let new:Bool
+    let delta:Int
     let subject:Subject
 }

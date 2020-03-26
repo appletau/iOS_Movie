@@ -1,5 +1,5 @@
 //
-//  TopMovie.swift
+//  BoxSubjectModel.swift
 //  HelloRxSwift
 //
 //  Created by ST_Ben.Huang 黃韋韜 on 2020/3/25.
@@ -8,10 +8,9 @@
 
 import Foundation
 
-struct TopMovie:Codable {
-    let start:Int
-    let count:Int
-    let total:Int
-    let title:String
-    let subjects:Array<Subject>
+struct BoxSubject:MovieSubject {
+    let rank:Int
+    let box:Int
+    let new:Bool
+    let subject:Subject
 }

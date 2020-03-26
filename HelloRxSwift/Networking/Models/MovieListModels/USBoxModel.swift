@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct USBox:Codable {
+struct USBox:MovieList {
     let title:String
     let date:String
     let subjects:Array<BoxSubject>

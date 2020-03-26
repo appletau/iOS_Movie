@@ -19,7 +19,6 @@ enum Movie {
         case top250,us_box,weekly,new_movies,in_theaters,coming_soon,null
         
         init<T>(type:T) {
-
              switch type {
              case is TopMovie.Type:
                 self = .top250

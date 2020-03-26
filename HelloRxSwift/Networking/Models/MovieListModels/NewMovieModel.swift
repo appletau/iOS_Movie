@@ -1,5 +1,5 @@
 //
-//  WeeklySubjectModel.swift
+//  NewMovieModel.swift
 //  HelloRxSwift
 //
 //  Created by ST_Ben.Huang 黃韋韜 on 2020/3/25.
@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct WeeklySubject:Codable {
-    let rank:Int
-    let delta:Int
-    let subject:Subject
+struct NewMovie:MovieList {
+    let title:String
+    let subjects:Array<Subject>
 }

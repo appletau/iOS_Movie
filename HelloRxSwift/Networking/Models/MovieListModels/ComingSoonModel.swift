@@ -1,5 +1,5 @@
 //
-//  InTheatersModel.swift
+//  ComingSoonModel.swift
 //  HelloRxSwift
 //
 //  Created by ST_Ben.Huang 黃韋韜 on 2020/3/25.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct InTheaters:Codable {
+struct ComingSoon:MovieList {
     let title:String
     let count:Int
     let start:Int

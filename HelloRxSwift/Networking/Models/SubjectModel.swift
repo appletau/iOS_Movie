@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Subject:Codable {
+struct Subject:MovieSubject {
     let id:String
     let title:String
     let original_title:String

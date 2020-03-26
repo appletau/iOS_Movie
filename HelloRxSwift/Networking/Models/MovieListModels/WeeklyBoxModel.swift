@@ -1,5 +1,5 @@
 //
-//  NewMovieModel.swift
+//  WeeklyBoxModel.swift
 //  HelloRxSwift
 //
 //  Created by ST_Ben.Huang 黃韋韜 on 2020/3/25.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct NewMovie:Codable {
+struct WeeklyBox:MovieList {
     let title:String
-    let subjects:Array<Subject>
+    let subjects:Array<WeeklySubject>
 }
