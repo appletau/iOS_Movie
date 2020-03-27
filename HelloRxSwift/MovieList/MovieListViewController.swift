@@ -19,8 +19,8 @@ class MovieListViewController: UIViewController {
     
     struct ScrollableTabData:ScrollableTabViewData {
         var title: String
-        
         var id: Int?
+        
         init(title:String, id:Int = -1) {
             self.title = title
             self.id = id
@@ -28,17 +28,14 @@ class MovieListViewController: UIViewController {
     }
     
     let tabData:Observable<[ScrollableTabViewData]> = Observable.create { (observer) -> Disposable in
-        let data = ["Top250","口碑榜","北美票房榜","新片榜","即將上映","正在熱映"].map {ScrollableTabData(title: $0)}
+        let data = MovieListType.allCases.map {ScrollableTabData(title: $0.chineseTitle)}
         observer.onNext(data)
         observer.onCompleted()
         return Disposables.create()
     }
     
-    let movies = PublishRelay<[MovieSubject]>()
-    
-    
-    
-    let bag = DisposeBag()
+    private let ViewModel = MovieListViewModel()
+    private let bag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,45 +53,16 @@ extension MovieListViewController {
     }
     
     private func binding() {
-        movies.bind(to: tableView.rx.items(cellIdentifier: String(describing: MovieListCell.self), cellType: MovieListCell.self)) { (row, element, cell) in
-            cell.setup(model: element)
-        }
-        .disposed(by: bag)
-
         tabData.bind(to: tabView.dataArray).disposed(by: bag)
         
-        tabView.didTapItem.subscribe(onNext: { (tabData) in
-            guard let title = tabData?.title else {return}
-            switch title {
-            case "Top250":
-                self.searchMovieList(type: TopMovie.self)
-            case "口碑榜":
-                self.searchMovieList(type: WeeklyBox.self)
-            case "北美票房榜":
-                self.searchMovieList(type: USBox.self)
-            case "新片榜":
-                self.searchMovieList(type: NewMovie.self)
-            case "即將上映":
-                self.searchMovieList(type: ComingSoon.self)
-            case "正在熱映":
-                self.searchMovieList(type: InTheaters.self)
-            default:
-                return
-            }
+        tabView.didTapItem.compactMap {($0?.title)}.bind(to: ViewModel.input.MovieListName).disposed(by: bag)
+        
+        ViewModel.output.movieListSearchResult.bind(to: tableView.rx.items(cellIdentifier: String(describing: MovieListCell.self), cellType: MovieListCell.self)) { (row, element, cell) in
+            cell.setup(model: element)
+        }.disposed(by: bag)
+        
+        ViewModel.output.loadingMovieListIsFinished.subscribe(onNext: { (_) in
+            self.tableView.scrollToTop()
         }).disposed(by: bag)
     }
-    
-    private func searchMovieList<T:MovieList>(type:T.Type) {
-        APIService.shared.request(Movie.GetMovieList(type: type, parameters: ["apikey":apiKey]))
-          .subscribe(onSuccess: { (model) in
-            self.movies.accept(model.subjects)
-            self.tableView.scrollToTop()
-          }, onError: { (e) in
-            if let e = e as? MoyaError, let errorMessage = try? e.response?.mapJSON() {
-              print(errorMessage)
-            }
-          })
-          .disposed(by: bag)
-    }
-    
 }

@@ -15,12 +15,23 @@ class MovieListCell: UITableViewCell {
     @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var publishDateLabel: UILabel!
     @IBOutlet weak var movieDurationLabel: UILabel!
+    @IBOutlet weak var cornerView: UIView!
+    @IBOutlet weak var shadowView: UIView!
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
-    }
+        shadowView.layer.shadowColor = UIColor.black.cgColor
+        shadowView.layer.shadowOpacity = 0.3
+        shadowView.layer.shadowRadius = 10
+        shadowView.layer.shadowOffset = .zero
+        shadowView.backgroundColor = .none
+        cornerView.layer.cornerRadius = 15
+        cornerView.clipsToBounds = true
+        }
     
     override func prepareForReuse() {
         self.titleLabel.text = ""
@@ -51,7 +62,7 @@ class MovieListCell: UITableViewCell {
             }
         }
         
-        self.publishDateLabel.text? += movieSubject.pubdates.first ?? ""
+        self.publishDateLabel.text? += String(movieSubject.pubdates.first?.prefix(10) ?? "")
         self.movieImageView.kf.setImage(with: movieSubject.images["small"])
         self.movieDurationLabel.text? += movieSubject.durations.first ?? ""
     }
