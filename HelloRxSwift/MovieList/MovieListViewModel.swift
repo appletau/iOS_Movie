@@ -14,7 +14,7 @@ import Moya
 class MovieListViewModel:ViewModelType {
     
     struct Input {
-        let MovieListName:AnyObserver<String>
+        let MovieListType:AnyObserver<MovieListType>
     }
     
     struct Output {
@@ -25,41 +25,37 @@ class MovieListViewModel:ViewModelType {
     let input: Input
     let output: Output
     
-    private let movieListNameSub = PublishSubject<String>()
+    private let movieListTypeSub = PublishSubject<MovieListType>()
     private let movieListResultSub = PublishRelay<[MovieSubject]>()
     
     private let bag = DisposeBag()
     
     init() {
         let isFinishedLoadingList = self.movieListResultSub.map {_ in ()}
-        
         self.output = Output(movieListSearchResult: movieListResultSub, loadingMovieListIsFinished: isFinishedLoadingList)
-        self.input = Input(MovieListName: movieListNameSub.asObserver())
+        self.input = Input(MovieListType: movieListTypeSub.asObserver())
         
-        movieListNameSub.subscribe(onNext: {[weak self] (name) in
-            self?.selectMovieListType(title: name)
+        movieListTypeSub.subscribe(onNext: {[weak self] (type) in
+            self?.selectMovieList(type: type)
         }).disposed(by: bag)
     }
 }
 
 extension MovieListViewModel {
-    
-    private func selectMovieListType(title:String) {
-        switch title {
-        case "Top250":
+    private func selectMovieList(type:MovieListType) {
+        switch type {
+        case .top250:
             self.searchMovieList(type: TopMovie.self)
-        case "口碑榜":
-            self.searchMovieList(type: WeeklyBox.self)
-        case "北美票房榜":
+        case .us_box:
             self.searchMovieList(type: USBox.self)
-        case "新片榜":
+        case .weekly:
+            self.searchMovieList(type: WeeklyBox.self)
+        case .new_movies:
             self.searchMovieList(type: NewMovie.self)
-        case "即將上映":
-            self.searchMovieList(type: ComingSoon.self)
-        case "正在熱映":
+        case .in_theaters:
             self.searchMovieList(type: InTheaters.self)
-        default:
-            return
+        case .coming_soon:
+            self.searchMovieList(type: ComingSoon.self)
         }
     }
     
