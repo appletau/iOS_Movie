@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct WeeklyBox:MovieList {
+struct WeeklyBox: MovieList {
     let title:String
     let subjects:Array<WeeklySubject>
 }

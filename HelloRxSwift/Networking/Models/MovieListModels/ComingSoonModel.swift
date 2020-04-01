@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ComingSoon:MovieList {
+struct ComingSoon: MovieList {
     let title:String
     let count:Int
     let start:Int

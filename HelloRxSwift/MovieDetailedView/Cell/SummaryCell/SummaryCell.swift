@@ -7,20 +7,36 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
-class SummaryCell: UITableViewCell {
+class SummaryCell: UITableViewCell,CellConfigurable,ExpandContent {
     
-    static let identifier = String(describing: self)
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    static let identifier = String(describing: SummaryCell.self)
+    var bag = DisposeBag()
+    
+    @IBOutlet weak var summaryLabel: UILabel!
+    @IBOutlet weak var expandBtn: UIButton!
+    
+    func setup(model: Codable) {
+        guard let model = model as? Subject else {return}
+        
+        summaryLabel.text = model.summary
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    
+    func switchLinesOfContentLabel(isExpand:Bool) {
+        if isExpand {
+            summaryLabel.numberOfLines = 0
+            expandBtn.setTitle("收縮", for: .normal)
+        } else {
+            summaryLabel.numberOfLines = 3
+            expandBtn.setTitle("展開", for: .normal)
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        bag = DisposeBag()
     }
     
 }

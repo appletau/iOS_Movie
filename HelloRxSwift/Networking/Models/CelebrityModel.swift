@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Celebrity:Codable {
+struct Celebrity: Codable {
     let id:String?
     let name:String?
     let name_en:String?

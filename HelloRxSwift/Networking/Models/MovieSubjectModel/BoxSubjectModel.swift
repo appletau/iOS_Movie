@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct BoxSubject:MovieSubject {
+struct BoxSubject: MovieSubject {
     let rank:Int
     let box:Int
     let new:Bool

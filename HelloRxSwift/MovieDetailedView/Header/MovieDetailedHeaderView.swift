@@ -10,7 +10,7 @@ import UIKit
 
 class MovieDetailedHeaderView: UITableViewHeaderFooterView {
     
-    static let identifier = String(describing: self)
+    static let identifier = String(describing: MovieDetailedHeaderView.self)
     
     private lazy var headerName:UILabel = {
         let label = UILabel()
@@ -30,18 +30,23 @@ class MovieDetailedHeaderView: UITableViewHeaderFooterView {
         return view
     }()
     
-
-    override func draw(_ rect: CGRect) {
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        
         setupUI()
         setupConstrants()
     }
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func setHeaderName(_ text: String) {
         self.headerName.text = text
     }
     
     private func setupUI() {
-        //self.backgroundView!.backgroundColor = .black//UIColor(red: 240/255, green: 243/255, blue:248/255 , alpha: 1)
+        self.contentView.backgroundColor = UIColor(red: 240/255, green: 243/255, blue:248/255 , alpha: 1)
     }
     
     private func setupConstrants() {

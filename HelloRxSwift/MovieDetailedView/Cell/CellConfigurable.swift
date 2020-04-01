@@ -9,6 +9,5 @@
 import Foundation
 
 protocol CellConfigurable {
-    associatedtype modelType
-    func setup(model: modelType)
+    func setup(model: Codable)
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct NewMovie:MovieList {
+struct NewMovie: MovieList {
     let title:String
     let subjects:Array<Subject>
 }

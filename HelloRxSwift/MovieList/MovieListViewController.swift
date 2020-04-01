@@ -34,14 +34,14 @@ class MovieListViewController: UIViewController {
         return Disposables.create()
     }
     
-    private let ViewModel = MovieListViewModel()
+    private let viewModel = MovieListViewModel()
     private let bag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         registerCell()
-        self.binding()
+        binding()
     }
 }
 
@@ -61,13 +61,13 @@ extension MovieListViewController {
     private func binding() {
         tabData.bind(to: tabView.dataArray).disposed(by: bag)
         
-        tabView.didTapItem.compactMap {($0?.title)}.compactMap{MovieListType(rawValue: $0)}.bind(to: ViewModel.input.MovieListType).disposed(by: bag)
+        tabView.didTapItem.compactMap {($0?.title)}.compactMap{MovieListType(rawValue: $0)}.bind(to: viewModel.input.MovieListType).disposed(by: bag)
         
-        ViewModel.output.movieListSearchResult.bind(to: tableView.rx.items(cellIdentifier: String(describing: MovieListCell.self), cellType: MovieListCell.self)) { (row, element, cell) in
+        viewModel.output.movieListSearchResult.bind(to: tableView.rx.items(cellIdentifier: String(describing: MovieListCell.self), cellType: MovieListCell.self)) { (row, element, cell) in
             cell.setup(model: element)
         }.disposed(by: bag)
         
-        ViewModel.output.loadingMovieListIsFinished.subscribe(onNext: { (_) in
+        viewModel.output.loadingMovieListIsFinished.subscribe(onNext: { (_) in
             self.tableView.scrollToTop()
         }).disposed(by: bag)
     }

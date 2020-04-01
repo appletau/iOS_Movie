@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TopMovie:MovieList {
+struct TopMovie: MovieList {
     let start:Int
     let count:Int
     let total:Int

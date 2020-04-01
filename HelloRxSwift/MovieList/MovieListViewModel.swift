@@ -27,7 +27,6 @@ class MovieListViewModel:ViewModelType {
     
     private let movieListTypeSub = PublishSubject<MovieListType>()
     private let movieListResultSub = PublishRelay<[MovieSubject]>()
-    
     private let bag = DisposeBag()
     
     init() {

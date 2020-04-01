@@ -8,19 +8,46 @@
 
 import UIKit
 
-class PhotosCell: UITableViewCell {
+class PhotosCell: UITableViewCell,CellConfigurable {
     
-    static let identifier = String(describing: self)
-
+    static let identifier = String(describing: PhotosCell.self)
+    
+    @IBOutlet var collectionView: UICollectionView!
+    
+    var photos:Array<Photo> = []
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(UINib(nibName: PhotosCollectionViewCell.identifier, bundle: nil),
+                                forCellWithReuseIdentifier: PhotosCollectionViewCell.identifier)
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
+    func setup(model: Codable) {
+        guard let model = model as? Subject else {return}
+        photos = model.photos
+        collectionView.reloadData()
+    }
+}
+
+extension PhotosCell:UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return photos.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotosCollectionViewCell.identifier,for: indexPath)
+        if let cell = cell as? PhotosCollectionViewCell {cell.setup(photo:photos[indexPath.row])}
+        return cell
+    }
+    
+}
+
+extension PhotosCell:UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 200, height: 200)
+    }
 }

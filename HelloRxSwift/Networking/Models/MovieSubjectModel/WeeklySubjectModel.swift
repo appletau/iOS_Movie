@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct WeeklySubject:MovieSubject {
+struct WeeklySubject: MovieSubject {
     let rank:Int
     let delta:Int
     let subject:Subject

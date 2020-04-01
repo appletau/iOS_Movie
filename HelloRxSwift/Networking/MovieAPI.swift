@@ -54,13 +54,13 @@ enum MovieListType:String, CaseIterable {
     }
 }
 
-protocol MovieListApiTargetType:ApiTargetType {}
+protocol MovieApiTargetType:ApiTargetType {}
 
-extension MovieListApiTargetType{}
+extension MovieApiTargetType{}
 
 enum Movie {
     
-    struct GetMovieList<T:MovieList>: MovieListApiTargetType {
+    struct GetMovieList<T:MovieList>: MovieApiTargetType {
         typealias ResponseDataType = T
         var path: String {return listType.urlPath}
         
@@ -72,6 +72,21 @@ enum Movie {
         init(type:T.Type , parameters:Dictionary<String,String>) {
             guard let type = MovieListType(type:type) else {fatalError("Wrong Type of Movie List")}
             self.listType = type
+            self.parameters = parameters
+        }
+    }
+    
+    struct GetMovie:MovieApiTargetType {
+        typealias ResponseDataType = Subject
+        
+        var path:String {return "subject/\(id)"}
+        var task: Task { return .requestParameters(parameters: parameters, encoding: URLEncoding.default) }
+        
+        private var parameters:Dictionary<String,String>
+        private var id:String
+        
+        init(id:String , parameters:Dictionary<String,String>) {
+            self.id = id
             self.parameters = parameters
         }
     }
