@@ -13,5 +13,5 @@ struct InTheaters: MovieList {
     let count:Int
     let start:Int
     let total:Int
-    let subjects:Array<Subject>
+    let subjects:Array<NormalSubject>
 }

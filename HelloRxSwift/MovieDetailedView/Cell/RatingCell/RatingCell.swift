@@ -7,11 +7,14 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class RatingCell: UITableViewCell,CellConfigurable {
-    static let identifier = String(describing: RatingCell.self)
-    
     @IBOutlet weak var ratingStarView: CosmosView!
+    
+    static let identifier = String(describing: RatingCell.self)
+    private var bag = DisposeBag()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -20,10 +23,16 @@ class RatingCell: UITableViewCell,CellConfigurable {
         ratingStarView.settings.starMargin = 10
     }
     
-    func setup(model: Codable) {
-        guard let model = model as? Subject else {return}
-        guard let rating = model.rating else {fatalError("No Rating Value")}
-        ratingStarView.rating = Double(rating.average/2)
+    func setup(viewModel: CellViewModel) {
+        guard let vm = viewModel as? RatingCellViewModel else {return}
+        vm.output.ratingAverage.drive(onNext: { [weak self] (value) in
+            self?.ratingStarView.rating = Double(value/2)
+        }).disposed(by: bag)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        bag = DisposeBag()
     }
 
 }

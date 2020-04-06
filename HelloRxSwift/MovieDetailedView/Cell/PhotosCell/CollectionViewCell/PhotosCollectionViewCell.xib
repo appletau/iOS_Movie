@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="PhotosCollectionViewCell" customModule="HelloRxSwift" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="140" height="159"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="140" height="159"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" image="cloud.drizzle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ydX-vY-XGx">
+                        <rect key="frame" x="5" y="10" width="130" height="140.5"/>
+                    </imageView>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="ydX-vY-XGx" secondAttribute="trailing" constant="5" id="B2U-ir-AEb"/>
+                <constraint firstItem="ydX-vY-XGx" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="10" id="Rrr-w0-l7Z"/>
+                <constraint firstItem="ydX-vY-XGx" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="5" id="pkF-B9-jGm"/>
+                <constraint firstItem="ZTg-uK-7eu" firstAttribute="bottom" secondItem="ydX-vY-XGx" secondAttribute="bottom" constant="10" id="zdy-vD-uVl"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <size key="customSize" width="140" height="159"/>
+            <connections>
+                <outlet property="photoImageView" destination="ydX-vY-XGx" id="1md-bR-hQ2"/>
+            </connections>
+            <point key="canvasLocation" x="202.89855072463769" y="157.03125"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="cloud.drizzle" catalog="system" width="64" height="62"/>
+    </resources>
+</document>

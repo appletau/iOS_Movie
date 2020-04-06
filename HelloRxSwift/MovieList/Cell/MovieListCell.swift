@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RxSwift
 import Kingfisher
 
 class MovieListCell: UITableViewCell {
@@ -17,6 +18,8 @@ class MovieListCell: UITableViewCell {
     @IBOutlet weak var movieDurationLabel: UILabel!
     @IBOutlet weak var cornerView: UIView!
     @IBOutlet weak var shadowView: UIView!
+    
+    private var bag = DisposeBag()
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -34,37 +37,22 @@ class MovieListCell: UITableViewCell {
         }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
+        bag = DisposeBag()
         self.titleLabel.text = ""
-        self.categoryLabel.text? = "類型："
-        self.publishDateLabel.text? = "上映日期："
-        self.movieDurationLabel.text? = "片長:"
+        self.categoryLabel.text? = ""
+        self.publishDateLabel.text? = ""
+        self.movieDurationLabel.text? = ""
     }
     
-    func setup(model:MovieSubject){
-        var movieSubject:Subject
-        
-        if let subject = model as? BoxSubject {
-            movieSubject = subject.subject
-        } else if let subject = model as? WeeklySubject {
-            movieSubject = subject.subject
-        } else if let subject = model as? Subject {
-            movieSubject = subject
-        } else {
-            return
-        }
-        
-        self.titleLabel.text = movieSubject.title
-        for (i,type) in movieSubject.genres.enumerated() {
-            if i == 0 {
-                self.categoryLabel.text? += type
-            } else {
-                self.categoryLabel.text? += "/\(type)"
-            }
-        }
-        
-        self.publishDateLabel.text? += String(movieSubject.pubdates.first?.prefix(10) ?? "")
-        self.movieImageView.kf.setImage(with: movieSubject.images["small"])
-        self.movieDurationLabel.text? += movieSubject.durations.first ?? ""
+    func setup(viewModel:MovieListCellViewModel) {
+        viewModel.output.title.drive(self.titleLabel.rx.text).disposed(by: bag)
+        viewModel.output.category.drive(self.categoryLabel.rx.text).disposed(by: bag)
+        viewModel.output.publishDate.drive(self.publishDateLabel.rx.text).disposed(by: bag)
+        viewModel.output.duration.drive(self.movieDurationLabel.rx.text).disposed(by: bag)
+        viewModel.output.imageURL.drive(onNext: { [weak self] (url) in
+            self?.movieImageView.kf.setImage(with: url)
+            }).disposed(by: bag)
     }
     
 }

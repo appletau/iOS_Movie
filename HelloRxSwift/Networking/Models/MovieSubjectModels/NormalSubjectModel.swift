@@ -1,5 +1,5 @@
 //
-//  SubjectModel.swift
+//  NormalSubjectModel.swift
 //  HelloRxSwift
 //
 //  Created by ST_Ben.Huang 黃韋韜 on 2020/3/25.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Subject: MovieSubject {
+struct NormalSubject:MovieSubject {
     let id:String
     let title:String
     let original_title:String
@@ -26,6 +26,7 @@ struct Subject: MovieSubject {
     let summary:String
     let photos:[Photo]
     let popular_comments:[Comment]
+
     
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)

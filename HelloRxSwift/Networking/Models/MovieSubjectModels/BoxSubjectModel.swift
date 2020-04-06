@@ -12,5 +12,5 @@ struct BoxSubject: MovieSubject {
     let rank:Int
     let box:Int
     let new:Bool
-    let subject:Subject
+    let subject:NormalSubject
 }

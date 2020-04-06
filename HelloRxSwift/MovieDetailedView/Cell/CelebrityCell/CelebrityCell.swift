@@ -8,13 +8,16 @@
 
 import UIKit
 import Kingfisher
+import RxSwift
+import RxCocoa
 
 class CelebrityCell: UITableViewCell,CellConfigurable {
-    static let identifier = String(describing: CelebrityCell.self)
-    
-    var celebrities:Array<Celebrity> = []
-    
     @IBOutlet weak var collectionView: UICollectionView!
+    
+    static let identifier = String(describing: CelebrityCell.self)
+    var celebrities:Array<Celebrity> = []
+    private var bag = DisposeBag()
+    private var cellViewModels:[CelebrityCollectionCellViewModel] = []
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -23,23 +26,30 @@ class CelebrityCell: UITableViewCell,CellConfigurable {
         collectionView.register(UINib(nibName: CelebrityCollectionViewCell.identifier, bundle: nil),
                                 forCellWithReuseIdentifier: CelebrityCollectionViewCell.identifier)
     }
-   
-    func setup(model: Codable) {
-        guard let model = model as? Subject else {return}
-        celebrities = model.directors + model.casts
-        collectionView.reloadData()
+    
+    func setup(viewModel: CellViewModel) {
+        guard let vm = viewModel as? CelebrityCellViewModel else {return}
+        vm.output.cellViewModels?.drive(onNext: { [weak self] (collectionCellVMs) in
+            self?.cellViewModels  = collectionCellVMs
+            self?.collectionView.reloadData()
+        }).disposed(by: bag)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        bag = DisposeBag()
     }
 }
 
 extension CelebrityCell:UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return celebrities.count
+        return cellViewModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CelebrityCollectionViewCell.identifier,for: indexPath)
-        if let cell = cell as? CelebrityCollectionViewCell {cell.setup(celebrity: celebrities[indexPath.row])}
+        if let cell = cell as? CelebrityCollectionViewCell {cell.setup(viewModel: cellViewModels[indexPath.row])}
         return cell
     }
     

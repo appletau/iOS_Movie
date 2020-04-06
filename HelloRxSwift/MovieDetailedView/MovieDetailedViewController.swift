@@ -12,66 +12,67 @@ import RxCocoa
 import Moya
 import RxDataSources
 
-class MovieDetailedViewController: UITableViewController {
-    private let viewModel = MovieDetailedViewModel()
+class MovieDetailedViewController: UIViewController {
+    @IBOutlet var tableView: UITableView!
+    
+    let viewModel = MovieDetailedViewModel()
     private let bag = DisposeBag()
     var expandedIndexSet : IndexSet = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
         registCell()
-        let test:Observable<String> = Observable.create { (observer) -> Disposable in
-            observer.onNext("1292052")
-            observer.onCompleted()
-            return Disposables.create()
-        }
-        test.bind(to: viewModel.input.subjectID).disposed(by: bag)
-        viewModel.output.subjectResultRelay.subscribe(onNext: { [weak self] (subject) in
-            guard let _ = subject else {return}
-            self?.tableView.reloadData()
-        }).disposed(by: bag)
+        initBinding()
+    }
+}
 
+extension MovieDetailedViewController:UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.output.sections.value[section].cellViewModels.count
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch MovieDetailedCellContent(rawValue:section) {
-        case .popular_review:
-            guard let model = viewModel.output.subjectResultRelay.value  else {return 1}
-            return model.popular_comments.count
-        default:
-            return 1
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return viewModel.output.sections.value.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: getCellIdentifier(for: indexPath.section), for: indexPath)
+        if let cell = cell as? CellConfigurable {
+            let cellVM = viewModel.output.sections.value[indexPath.section].cellViewModels[indexPath.row]
+            cell.setup(viewModel: cellVM)
         }
+        return setupCellBinding(cell, indexPath: indexPath)
     }
+    
+}
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return MovieDetailedCellContent.allCases.count
-    }
-
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+extension MovieDetailedViewController:UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 { return CGFloat.leastNormalMagnitude }
         return 30
     }
-
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-         return getHeaderView(for: section)
-     }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: getCellIdentifier(for: indexPath.section), for: indexPath)
-        guard let model = viewModel.output.subjectResultRelay.value  else {return cell}
-        if let cell = cell as? CellConfigurable {
-            switch MovieDetailedCellContent(rawValue:indexPath.section) {
-            case .popular_review:
-                cell.setup(model: model.popular_comments[indexPath.row])
-            default:
-                cell.setup(model: model)
-            }
-        }
-        return setupCellBinding(cell, indexPath: indexPath)
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {return nil}
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier:  MovieDetailedHeaderView.identifier)as! MovieDetailedHeaderView
+        header.setHeaderName(viewModel.output.sections.value[section].headerName)
+        return header
     }
 }
 
 extension MovieDetailedViewController {
+    
+    private func setupUI() {
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "back_arrow"),
+                                                           style: .done,
+                                                           target: self,
+                                                           action: nil)
+        navigationItem.leftBarButtonItem?.tintColor = .black
+    }
     
     private func registCell() {
         tableView.register(MovieDetailedHeaderView.self,
@@ -86,30 +87,20 @@ extension MovieDetailedViewController {
                            forCellReuseIdentifier: CelebrityCell.identifier)
         tableView.register(UINib(nibName: PhotosCell.identifier, bundle: nil),
                            forCellReuseIdentifier: PhotosCell.identifier)
-        tableView.register(UINib(nibName: ReviewTableViewCell.identifier, bundle: nil),
-                           forCellReuseIdentifier: ReviewTableViewCell.identifier)
+        tableView.register(UINib(nibName: CommentCell.identifier, bundle: nil),
+                           forCellReuseIdentifier: CommentCell.identifier)
     }
     
-    private func getHeaderView(for sectionIndex:Int) ->UIView? {
-        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier:  MovieDetailedHeaderView.identifier)as! MovieDetailedHeaderView
-        switch MovieDetailedCellContent(rawValue:sectionIndex) {
-          case .main_info:
-              return nil
-          case .rating:
-            let rating = viewModel.output.subjectResultRelay.value?.rating?.average
-            header.setHeaderName("評分：\(rating ?? 0)")
-          case .summary:
-              header.setHeaderName("劇情簡介：")
-          case .celebrity:
-              header.setHeaderName("演職員：")
-          case .photos:
-              header.setHeaderName("劇照：")
-          case .popular_review:
-              header.setHeaderName("熱評：")
-          case .none:
-              fatalError("Out Of Case")
-          }
-        return header
+    private func initBinding() {
+        viewModel.output.sections.subscribe(onNext: { [weak self] (_) in
+            self?.tableView.reloadData()
+        }).disposed(by: bag)
+        
+        viewModel.output.movieTitle.bind(to: self.rx.title).disposed(by: bag)
+        
+        navigationItem.leftBarButtonItem?.rx.tap.subscribe(onNext: {[weak self] (_) in
+            self?.navigationController?.popViewController(animated: true)
+        }).disposed(by: bag)
     }
     
     private func getCellIdentifier(for sectionIndex:Int) -> String {
@@ -124,8 +115,8 @@ extension MovieDetailedViewController {
             return CelebrityCell.identifier
         case .photos:
             return PhotosCell.identifier
-        case .popular_review:
-            return ReviewTableViewCell.identifier
+        case .popular_comment:
+            return CommentCell.identifier
         case .none:
             fatalError("Out Of Case")
         }
@@ -134,17 +125,9 @@ extension MovieDetailedViewController {
     private func setupCellBinding(_ cell:UITableViewCell, indexPath:IndexPath) -> UITableViewCell {
         guard let c = cell as? ExpandContent else {return cell}
         c.expandBtn.rx.tap.subscribe { [weak self] _ in
-            guard let self = self else {return}
-            if(self.expandedIndexSet.contains(indexPath.row)){
-                self.expandedIndexSet.remove(indexPath.row)
-            } else {
-                self.expandedIndexSet.insert(indexPath.row)
-            }
-            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+            self?.tableView.reloadRows(at: [indexPath], with: .fade)
         }.disposed(by: c.bag)
-        c.switchLinesOfContentLabel(isExpand: expandedIndexSet.contains(indexPath.row))
         return c
-        
     }
-
+    
 }

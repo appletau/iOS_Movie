@@ -18,20 +18,24 @@ class MovieListViewModel:ViewModelType {
     }
     
     struct Output {
-        let movieListSearchResult:PublishRelay<[MovieSubject]>
-        let loadingMovieListIsFinished:Observable<()>
+        let movieListSearchResult:BehaviorRelay<[NormalSubject]>
+        let movieListCellVMsRelay:BehaviorRelay<[MovieListCellViewModel]>
+        let loadingMovieListIsFinished:Observable<Bool>
     }
     
     let input: Input
     let output: Output
     
     private let movieListTypeSub = PublishSubject<MovieListType>()
-    private let movieListResultSub = PublishRelay<[MovieSubject]>()
+    private let movieListResultRelay = BehaviorRelay<[NormalSubject]>(value: [])
+    private let movieListCellVMsRelay = BehaviorRelay<[MovieListCellViewModel]>(value: [])
     private let bag = DisposeBag()
     
     init() {
-        let isFinishedLoadingList = self.movieListResultSub.map {_ in ()}
-        self.output = Output(movieListSearchResult: movieListResultSub, loadingMovieListIsFinished: isFinishedLoadingList)
+        let isFinishedLoadingList = self.movieListResultRelay.map {$0.count > 0 ? true : false}
+        self.output = Output(movieListSearchResult: movieListResultRelay,
+                             movieListCellVMsRelay: movieListCellVMsRelay,
+                             loadingMovieListIsFinished: isFinishedLoadingList)
         self.input = Input(MovieListType: movieListTypeSub.asObserver())
         
         movieListTypeSub.subscribe(onNext: {[weak self] (type) in
@@ -59,14 +63,31 @@ extension MovieListViewModel {
     }
     
     private func searchMovieList<T:MovieList>(type:T.Type) {
-        APIService.shared.request(Movie.GetMovieList(type: type, parameters: ["apikey":apiKey]))
-            .subscribe(onSuccess: {[weak self] (model) in
-                self?.movieListResultSub.accept(model.subjects)
-            }, onError: { (e) in
-                if let e = e as? MoyaError, let errorMessage = try? e.response?.mapJSON() {
-                    print(errorMessage)
-                }
-            })
-            .disposed(by: bag)
+        APIService.shared.request(Movie.GetMovieList(type: type, parameters: ["apikey":apiKey])).map({ [weak self] (list) -> [MovieListCellViewModel] in
+            guard let self = self else {return []}
+            let subList = self.getMovieSubjects(list: list)
+            let cellViewModels = self.convertToCellVMS(withSubjectList: subList)
+            return cellViewModels
+            }).asObservable().bind(to: self.movieListCellVMsRelay).disposed(by: bag)
     }
+    
+    private func getMovieSubjects<T:MovieList>(list:T) -> [NormalSubject] {
+        if let subjects = list.subjects as? [WeeklySubject] {
+            return subjects.map { $0.subject }
+        } else if let subjects = list.subjects as? [BoxSubject] {
+             return subjects.map { $0.subject }
+        }else if let subjects = list.subjects as? [NormalSubject] {
+            return subjects
+        }
+        return []
+    }
+    
+    private func convertToCellVMS(withSubjectList subList:[NormalSubject]) -> [MovieListCellViewModel] {
+        return subList.map { (sub) -> MovieListCellViewModel in
+            let vm = MovieListCellViewModel()
+            Observable.just(sub).bind(to: vm.input.movieSubject).disposed(by: vm.bag)
+            return vm
+        }
+    }
+
 }

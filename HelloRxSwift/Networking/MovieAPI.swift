@@ -77,7 +77,7 @@ enum Movie {
     }
     
     struct GetMovie:MovieApiTargetType {
-        typealias ResponseDataType = Subject
+        typealias ResponseDataType = NormalSubject
         
         var path:String {return "subject/\(id)"}
         var task: Task { return .requestParameters(parameters: parameters, encoding: URLEncoding.default) }

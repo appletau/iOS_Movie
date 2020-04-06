@@ -11,21 +11,23 @@ import RxCocoa
 import RxSwift
 
 class SummaryCell: UITableViewCell,CellConfigurable,ExpandContent {
+    @IBOutlet weak var summaryLabel: UILabel!
+    @IBOutlet weak var expandBtn: UIButton!
     
     static let identifier = String(describing: SummaryCell.self)
     var bag = DisposeBag()
     
-    @IBOutlet weak var summaryLabel: UILabel!
-    @IBOutlet weak var expandBtn: UIButton!
-    
-    func setup(model: Codable) {
-        guard let model = model as? Subject else {return}
-        
-        summaryLabel.text = model.summary
+    func setup(viewModel: CellViewModel) {
+        guard let vm = viewModel as? SummaryCellViewModel else {return}
+        vm.output.summary.drive(summaryLabel.rx.text).disposed(by: bag)
+        expandBtn.rx.tap.bind(to: vm.input.expandBtnPressed).disposed(by: bag)
+        vm.output.isCellExpanded.subscribe(onNext: { [weak self] (isExpended) in
+            self?.switchLinesOfContentLabel(isExpended)
+            }).disposed(by: bag)
     }
     
-    func switchLinesOfContentLabel(isExpand:Bool) {
-        if isExpand {
+    func switchLinesOfContentLabel(_ isExpanded:Bool) {
+        if isExpanded {
             summaryLabel.numberOfLines = 0
             expandBtn.setTitle("收縮", for: .normal)
         } else {

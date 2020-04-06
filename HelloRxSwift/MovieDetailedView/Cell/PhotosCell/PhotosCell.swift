@@ -7,14 +7,16 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class PhotosCell: UITableViewCell,CellConfigurable {
-    
-    static let identifier = String(describing: PhotosCell.self)
-    
     @IBOutlet var collectionView: UICollectionView!
     
+    static let identifier = String(describing: PhotosCell.self)
     var photos:Array<Photo> = []
+    private var bag = DisposeBag()
+    private var cellViewModels:[PhotosCollectionCellViewModel] = []
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -23,24 +25,30 @@ class PhotosCell: UITableViewCell,CellConfigurable {
         collectionView.register(UINib(nibName: PhotosCollectionViewCell.identifier, bundle: nil),
                                 forCellWithReuseIdentifier: PhotosCollectionViewCell.identifier)
     }
-
-
-    func setup(model: Codable) {
-        guard let model = model as? Subject else {return}
-        photos = model.photos
-        collectionView.reloadData()
+    
+    func setup(viewModel: CellViewModel) {
+        guard let vm = viewModel as? PhotoCellViewModel else {return}
+        vm.output.cellViewModels?.drive(onNext: { [weak self] (collectionCellVMs) in
+            self?.cellViewModels  = collectionCellVMs
+            self?.collectionView.reloadData()
+        } ).disposed(by: bag)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        bag = DisposeBag()
     }
 }
 
 extension PhotosCell:UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photos.count
+        return cellViewModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotosCollectionViewCell.identifier,for: indexPath)
-        if let cell = cell as? PhotosCollectionViewCell {cell.setup(photo:photos[indexPath.row])}
+        if let cell = cell as? PhotosCollectionViewCell {cell.setup(viewModel: cellViewModels[indexPath.row])}
         return cell
     }
     

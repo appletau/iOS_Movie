@@ -11,5 +11,5 @@ import Foundation
 struct WeeklySubject: MovieSubject {
     let rank:Int
     let delta:Int
-    let subject:Subject
+    let subject:NormalSubject
 }

@@ -14,5 +14,5 @@ import RxSwift
 protocol ExpandContent:UITableViewCell {
     var expandBtn:UIButton!{get}
     var bag:DisposeBag{get}
-    func switchLinesOfContentLabel(isExpand:Bool)
+    func switchLinesOfContentLabel(_ isExpanded:Bool)
 }

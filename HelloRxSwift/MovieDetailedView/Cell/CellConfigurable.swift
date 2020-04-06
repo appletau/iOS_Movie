@@ -9,5 +9,5 @@
 import Foundation
 
 protocol CellConfigurable {
-    func setup(model: Codable)
+    func setup(viewModel: CellViewModel)
 }

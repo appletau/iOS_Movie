@@ -18,61 +18,74 @@ enum MovieDetailedCellContent:Int ,CaseIterable {
     case summary
     case celebrity
     case photos
-    case popular_review
+    case popular_comment
 }
 
 class MovieDetailedViewModel:ViewModelType {
     
     struct Input {
-        let summaryCellExpandBtnPressed:AnyObserver<Void>
         let subjectID:AnyObserver<String>
     }
     
     struct Output {
-        let isSummaryCellExpand:BehaviorRelay<Bool>
-        let subjectResultRelay:BehaviorRelay<Subject?>
+        let sections:BehaviorRelay<[Section]>
+        let movieTitle:BehaviorRelay<String>
     }
     
     let input: Input
     let output: Output
     
-    private let cellBtnPressedSub = PublishSubject<Void>()
     private let idSub = PublishSubject<String>()
-    private let isCellExpandRelay = BehaviorRelay<Bool>(value: false)
-    private let subjectResultRelay = BehaviorRelay<Subject?>(value: nil)
+    private let sectionsRelay = BehaviorRelay<[Section]>(value: [])
+    private let movieTitleRelay = BehaviorRelay<String>(value:"")
     private let bag = DisposeBag()
     
-    var test:((Bool) ->Void) = { (Bool) -> Void in}
-    
     init() {
-        self.input = Input(summaryCellExpandBtnPressed: cellBtnPressedSub.asObserver(), subjectID: idSub.asObserver())
-        self.output = Output(isSummaryCellExpand: isCellExpandRelay, subjectResultRelay: subjectResultRelay)
+        self.input = Input(subjectID: idSub.asObserver())
+        self.output = Output(sections: sectionsRelay, movieTitle: movieTitleRelay)
         
         idSub.subscribe(onNext: { (id) in
             self.searchMovie(id: id)
             }).disposed(by: bag)
-        
-        cellBtnPressedSub.subscribe { [weak self] (_) in
-            guard let self = self else {return}
-            if self.isCellExpandRelay.value {
-                self.isCellExpandRelay.accept(false)
-                self.test(false)
-            } else {
-                self.isCellExpandRelay.accept(true)
-                self.test(true)
-            }
-        }.disposed(by: bag)
     }
     
     private func searchMovie(id:String) {
         APIService.shared.request(Movie.GetMovie(id: id, parameters: ["apikey":apiKey]))
-            .subscribe(onSuccess: {[weak self] (model) in
-                self?.subjectResultRelay.accept(model)
+            .subscribe(onSuccess: {[weak self] (movieSubject) in
+                guard let self = self else {return}
+                self.movieTitleRelay.accept(movieSubject.title)
+                self.sectionsRelay.accept(self.convertToSction(withMovieSubject: movieSubject))
                 }, onError: { (e) in
                     if let e = e as? MoyaError, let errorMessage = try? e.response?.mapJSON() {
                         print(errorMessage)
                     }
             })
             .disposed(by: bag)
+    }
+    
+    private func convertToSction(withMovieSubject sub:NormalSubject) -> [Section] {
+        let movieSub = Observable.just(sub)
+        let mainCellVM = MainInfoCellViewModel()
+        let ratingCellVM = RatingCellViewModel()
+        let summaryCellVM = SummaryCellViewModel()
+        let celebrityCellVM = CelebrityCellViewModel()
+        let photosCellVM = PhotoCellViewModel()
+        movieSub.bind(to: mainCellVM.input.movieSubject).disposed(by: mainCellVM.bag)
+        movieSub.bind(to: ratingCellVM.input.movieSubject).disposed(by: ratingCellVM.bag)
+        movieSub.bind(to: summaryCellVM.input.movieSubject).disposed(by: summaryCellVM.bag)
+        movieSub.bind(to: celebrityCellVM.input.movieSubject).disposed(by: celebrityCellVM.bag)
+        movieSub.bind(to: photosCellVM.input.movieSubject).disposed(by: photosCellVM.bag)
+        let commentCellVMs = sub.popular_comments.map { (comment) -> CommentCellViewModel in
+            let commentCellVM = CommentCellViewModel()
+            Observable.just(comment).bind(to: commentCellVM.input.comment).disposed(by: commentCellVM.bag)
+            return commentCellVM
+        }
+        let sections:Array<Section> = [Section(headerName: "", cellViewModels: [mainCellVM]),
+                                       Section(headerName: "評分：\(sub.rating?.average ?? 0)", cellViewModels: [ratingCellVM]),
+                                       Section(headerName: "劇情簡介：", cellViewModels: [summaryCellVM]),
+                                       Section(headerName: "演職員：", cellViewModels: [celebrityCellVM]),
+                                       Section(headerName: "劇照：", cellViewModels: [photosCellVM]),
+                                       Section(headerName: "熱評：", cellViewModels: commentCellVMs),]
+        return sections
     }
 }

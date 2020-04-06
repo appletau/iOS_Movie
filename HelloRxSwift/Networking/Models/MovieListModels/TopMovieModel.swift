@@ -13,5 +13,5 @@ struct TopMovie: MovieList {
     let count:Int
     let total:Int
     let title:String
-    let subjects:Array<Subject>
+    let subjects:Array<NormalSubject>
 }
