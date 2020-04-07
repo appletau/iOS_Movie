@@ -21,6 +21,7 @@ class RatingCell: UITableViewCell,CellConfigurable {
         ratingStarView.settings.updateOnTouch = false
         ratingStarView.settings.starSize = 50
         ratingStarView.settings.starMargin = 10
+        ratingStarView.settings.filledColor = .red
     }
     
     func setup(viewModel: CellViewModel) {

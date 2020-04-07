@@ -11,8 +11,9 @@ import UIKit
 import RxSwift
 
 
-protocol ExpandContent:UITableViewCell {
-    var expandBtn:UIButton!{get}
-    var bag:DisposeBag{get}
+protocol CellExpandable:UITableViewCell {
+    var expandBtn:UIButton! {get}
+    var maxNumberOfLine:Int {get}
+    var bag:DisposeBag {get}
     func switchLinesOfContentLabel(_ isExpanded:Bool)
 }

@@ -7,5 +7,10 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-protocol CellViewModel {}
+protocol CellViewModel {
+//    associatedtype binderType
+//    var inputBinder:BehaviorRelay<binderType> {get}
+}

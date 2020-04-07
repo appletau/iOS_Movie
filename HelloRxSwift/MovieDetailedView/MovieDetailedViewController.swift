@@ -14,13 +14,16 @@ import RxDataSources
 
 class MovieDetailedViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
+    @IBOutlet weak var loadingIndicatorView: LoadingIndicatorView!
     
     let viewModel = MovieDetailedViewModel()
     private let bag = DisposeBag()
-    var expandedIndexSet : IndexSet = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.refreshControl?.rx.controlEvent(.valueChanged).subscribe(onNext: { () in
+            print("hi")
+            }).disposed(by: bag)
         setupUI()
         registCell()
         initBinding()
@@ -71,7 +74,9 @@ extension MovieDetailedViewController {
                                                            style: .done,
                                                            target: self,
                                                            action: nil)
-        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationItem.leftBarButtonItem?.tintColor = .white
+        let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
     }
     
     private func registCell() {
@@ -92,11 +97,16 @@ extension MovieDetailedViewController {
     }
     
     private func initBinding() {
-        viewModel.output.sections.subscribe(onNext: { [weak self] (_) in
+        viewModel.output.sections.subscribe(onNext: { [weak self] (sections) in
             self?.tableView.reloadData()
         }).disposed(by: bag)
         
         viewModel.output.movieTitle.bind(to: self.rx.title).disposed(by: bag)
+        
+        viewModel.output.loadingMovieIsFinished.drive(onNext: { [weak self] (isLoaded) in
+            guard let self = self else {return}
+            isLoaded ? self.loadingIndicatorView.stopAnimating() : self.loadingIndicatorView.startAnimating()
+            }).disposed(by: bag)
         
         navigationItem.leftBarButtonItem?.rx.tap.subscribe(onNext: {[weak self] (_) in
             self?.navigationController?.popViewController(animated: true)
@@ -123,7 +133,7 @@ extension MovieDetailedViewController {
     }
     
     private func setupCellBinding(_ cell:UITableViewCell, indexPath:IndexPath) -> UITableViewCell {
-        guard let c = cell as? ExpandContent else {return cell}
+        guard let c = cell as? CellExpandable else {return cell}
         c.expandBtn.rx.tap.subscribe { [weak self] _ in
             self?.tableView.reloadRows(at: [indexPath], with: .fade)
         }.disposed(by: c.bag)

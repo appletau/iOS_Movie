@@ -10,11 +10,12 @@ import UIKit
 import RxCocoa
 import RxSwift
 
-class SummaryCell: UITableViewCell,CellConfigurable,ExpandContent {
+class SummaryCell: UITableViewCell,CellConfigurable,CellExpandable {
     @IBOutlet weak var summaryLabel: UILabel!
     @IBOutlet weak var expandBtn: UIButton!
     
     static let identifier = String(describing: SummaryCell.self)
+    var maxNumberOfLine = 3
     var bag = DisposeBag()
     
     func setup(viewModel: CellViewModel) {
@@ -23,7 +24,11 @@ class SummaryCell: UITableViewCell,CellConfigurable,ExpandContent {
         expandBtn.rx.tap.bind(to: vm.input.expandBtnPressed).disposed(by: bag)
         vm.output.isCellExpanded.subscribe(onNext: { [weak self] (isExpended) in
             self?.switchLinesOfContentLabel(isExpended)
-            }).disposed(by: bag)
+        }).disposed(by: bag)
+        summaryLabel.rx.observe(Bool.self, "text").subscribe(onNext: {[weak self] (v) in
+            guard let self = self else {return}
+            self.expandBtn.isHidden = !self.summaryLabel.isLabelTruncated(maxNumberOfLine: self.maxNumberOfLine)
+        }).disposed(by: bag)
     }
     
     func switchLinesOfContentLabel(_ isExpanded:Bool) {
@@ -31,7 +36,7 @@ class SummaryCell: UITableViewCell,CellConfigurable,ExpandContent {
             summaryLabel.numberOfLines = 0
             expandBtn.setTitle("收縮", for: .normal)
         } else {
-            summaryLabel.numberOfLines = 3
+            summaryLabel.numberOfLines = maxNumberOfLine
             expandBtn.setTitle("展開", for: .normal)
         }
     }

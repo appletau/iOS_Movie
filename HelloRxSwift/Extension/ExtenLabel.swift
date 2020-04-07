@@ -10,19 +10,12 @@ import Foundation
 import UIKit
 
 extension UILabel {
+    
+    func isLabelTruncated(maxNumberOfLine:Int) -> Bool {
+         let myText = self.text! as NSString
+         let rect = CGSize(width: self.bounds.width, height: CGFloat.greatestFiniteMagnitude)
+         let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [.font: self.font!], context: nil)
 
-    var isTruncated: Bool {
-
-        guard let labelText = text else {
-            return false
-        }
-
-        let labelTextSize = (labelText as NSString).boundingRect(
-            with: CGSize(width: frame.size.width, height: .greatestFiniteMagnitude),
-            options: .usesLineFragmentOrigin,
-            attributes: [.font: font as Any],
-            context: nil).size
-
-        return labelTextSize.height > bounds.size.height
-    }
+         return Int(ceil(CGFloat(labelSize.height) / self.font.lineHeight)) > maxNumberOfLine
+     }
 }

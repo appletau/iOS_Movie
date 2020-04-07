@@ -27,10 +27,16 @@ class MovieListViewController: UIViewController {
     @IBOutlet private weak var functionListBtn: UIButton!
     @IBOutlet private weak var tabView: ScrollableTabView!
     @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet weak var loadingIndicatorView: LoadingIndicatorView!
     
+    let tabData:Observable<[ScrollableTabViewData]> = Observable.just(MovieListType.allCases.map {ScrollableTabData(title: $0.rawValue)})
     private let viewModel = MovieListViewModel()
     private let bag = DisposeBag()
-    let tabData:Observable<[ScrollableTabViewData]> = Observable.just(MovieListType.allCases.map {ScrollableTabData(title: $0.rawValue)})
+    
+    lazy var refreshControl: RxRefreshControl = {
+       return RxRefreshControl(viewModel)
+    }()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +49,7 @@ class MovieListViewController: UIViewController {
 extension MovieListViewController {
     
     private func setupUI() {
+        tableView.refreshControl = refreshControl
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         searchBar.searchTextField.backgroundColor = .white
         searchBar.barTintColor = UIColor(red: 38/255, green: 171/255, blue: 82/255, alpha: 1)
@@ -66,8 +73,14 @@ extension MovieListViewController {
             cell.setup(viewModel: element)
         }.disposed(by: bag)
         
-        viewModel.output.loadingMovieListIsFinished.subscribe(onNext: { (isLoaded) in
-            if isLoaded {self.tableView.scrollToTop()}
+        viewModel.output.loadingMovieListIsFinished.drive(onNext: { [weak self] (isLoaded) in
+            guard let self = self else {return}
+            if isLoaded {
+                self.tableView.scrollToTop()
+                self.loadingIndicatorView.stopAnimating()
+            } else {
+                self.loadingIndicatorView.startAnimating()
+            }
         }).disposed(by: bag)
         
     }

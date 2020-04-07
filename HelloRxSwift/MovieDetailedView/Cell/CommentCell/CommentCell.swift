@@ -11,7 +11,7 @@ import RxCocoa
 import RxSwift
 import Kingfisher
 
-class CommentCell: UITableViewCell,CellConfigurable,ExpandContent {
+class CommentCell: UITableViewCell,CellConfigurable,CellExpandable {
     @IBOutlet weak var photoImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -20,6 +20,7 @@ class CommentCell: UITableViewCell,CellConfigurable,ExpandContent {
     @IBOutlet weak var expandBtn: UIButton!
     
     static let identifier = String(describing: CommentCell.self)
+    var maxNumberOfLine = 3
     var bag = DisposeBag()
     
     func setup(viewModel: CellViewModel) {
@@ -29,12 +30,15 @@ class CommentCell: UITableViewCell,CellConfigurable,ExpandContent {
         vm.output.usefulCount.drive(usefulCountLabel.rx.text).disposed(by: bag)
         expandBtn.rx.tap.bind(to: vm.input.expandBtnPressed).disposed(by: bag)
         vm.output.avatarURL.drive(onNext: { [weak self] (url) in
-            
             self?.photoImageView.kf.setImage(with: url)
         }).disposed(by: bag)
         vm.output.isCellExpanded.subscribe(onNext: { [weak self] (isExpended) in
             self?.switchLinesOfContentLabel( isExpended)
         }).disposed(by: bag)
+        commentLabel.rx.observe(Bool.self, "text").subscribe(onNext: {[weak self] (v) in
+            guard let self = self else {return}
+            self.expandBtn.isHidden = !self.commentLabel.isLabelTruncated(maxNumberOfLine: self.maxNumberOfLine)
+            }).disposed(by: bag)
     }
     
     func switchLinesOfContentLabel(_ isExpanded:Bool) {
@@ -42,12 +46,10 @@ class CommentCell: UITableViewCell,CellConfigurable,ExpandContent {
             commentLabel.numberOfLines = 0
             expandBtn.setTitle("收縮", for: .normal)
         } else {
-            commentLabel.numberOfLines = 3
+            commentLabel.numberOfLines = maxNumberOfLine
             expandBtn.setTitle("展開", for: .normal)
         }
     }
-    
-    
     
     override func prepareForReuse() {
         super.prepareForReuse()

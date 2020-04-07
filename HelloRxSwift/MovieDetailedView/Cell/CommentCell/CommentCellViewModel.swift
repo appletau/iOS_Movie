@@ -34,7 +34,7 @@ class CommentCellViewModel: ViewModelType, CellViewModel {
     init() {
         let commentDriver = movieSubjectRelay.asDriver().compactMap {$0?.content}
         let publishDateDriver = movieSubjectRelay.asDriver().compactMap {$0?.created_at}
-        let usefulCountDriver = movieSubjectRelay.asDriver().map {"\($0?.useful_count ?? 0)"}
+        let usefulCountDriver = movieSubjectRelay.asDriver().map {"\($0?.useful_count ?? 0)有用"}
         let avatarURLDrvier = movieSubjectRelay.asDriver().compactMap {$0?.author.avatar}
         input = Input(comment: movieSubjectRelay, expandBtnPressed: expandBtnPressedRelay)
         output = Output(comment: commentDriver,

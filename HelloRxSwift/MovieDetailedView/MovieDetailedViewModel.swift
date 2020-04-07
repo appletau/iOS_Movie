@@ -19,6 +19,23 @@ enum MovieDetailedCellContent:Int ,CaseIterable {
     case celebrity
     case photos
     case popular_comment
+    
+    func getHeaderName(withString string:String = "") ->String {
+        switch self {
+        case .main_info:
+            return "" + string
+        case .rating:
+            return "評分：" + string
+        case .summary:
+            return "劇情簡介：" + string
+        case .celebrity:
+            return "演職員" + string
+        case .photos:
+            return "劇照：" + string
+        case .popular_comment:
+            return "熱評：" + string
+        }
+    }
 }
 
 class MovieDetailedViewModel:ViewModelType {
@@ -30,6 +47,7 @@ class MovieDetailedViewModel:ViewModelType {
     struct Output {
         let sections:BehaviorRelay<[Section]>
         let movieTitle:BehaviorRelay<String>
+        let loadingMovieIsFinished:Driver<Bool>
     }
     
     let input: Input
@@ -41,51 +59,70 @@ class MovieDetailedViewModel:ViewModelType {
     private let bag = DisposeBag()
     
     init() {
+        let loadingMovieIsFinished = sectionsRelay.asDriver().map {$0.count > 0 ? true : false}
         self.input = Input(subjectID: idSub.asObserver())
-        self.output = Output(sections: sectionsRelay, movieTitle: movieTitleRelay)
+        self.output = Output(sections: sectionsRelay, movieTitle: movieTitleRelay, loadingMovieIsFinished: loadingMovieIsFinished)
         
         idSub.subscribe(onNext: { (id) in
             self.searchMovie(id: id)
+        }).disposed(by: bag)
+    }
+}
+
+extension MovieDetailedViewModel {
+    
+    private func searchMovie(id:String) {
+        //clear
+        sectionsRelay.accept([])
+        //get
+        APIService.shared.request(Movie.GetMovie(id: id, parameters: ["apikey":apiKey])).subscribe(onSuccess: {[weak self] (movieSubject) in
+            guard let self = self else {return}
+            self.movieTitleRelay.accept(movieSubject.title)
+            self.sectionsRelay.accept(self.convertToSction(withMovieSubject: movieSubject))
             }).disposed(by: bag)
     }
     
-    private func searchMovie(id:String) {
-        APIService.shared.request(Movie.GetMovie(id: id, parameters: ["apikey":apiKey]))
-            .subscribe(onSuccess: {[weak self] (movieSubject) in
-                guard let self = self else {return}
-                self.movieTitleRelay.accept(movieSubject.title)
-                self.sectionsRelay.accept(self.convertToSction(withMovieSubject: movieSubject))
-                }, onError: { (e) in
-                    if let e = e as? MoyaError, let errorMessage = try? e.response?.mapJSON() {
-                        print(errorMessage)
-                    }
-            })
-            .disposed(by: bag)
+    private func convertToSction(withMovieSubject sub:NormalSubject) -> [Section] {
+        var sections:[Section] = []
+        for type in MovieDetailedCellContent.allCases {
+            let headerName = type == .rating ? type.getHeaderName(withString: "\(sub.rating?.average ?? 0)") : type.getHeaderName()
+            let cellVMs = createCellVMs(type: type, withMovieSubject: sub)
+            let section = Section(headerName: headerName, cellViewModels: cellVMs)
+            sections.append(section)
+        }
+        return sections
     }
     
-    private func convertToSction(withMovieSubject sub:NormalSubject) -> [Section] {
+    private func createCellVMs(type:MovieDetailedCellContent, withMovieSubject sub:NormalSubject) -> [CellViewModel]{
         let movieSub = Observable.just(sub)
-        let mainCellVM = MainInfoCellViewModel()
-        let ratingCellVM = RatingCellViewModel()
-        let summaryCellVM = SummaryCellViewModel()
-        let celebrityCellVM = CelebrityCellViewModel()
-        let photosCellVM = PhotoCellViewModel()
-        movieSub.bind(to: mainCellVM.input.movieSubject).disposed(by: mainCellVM.bag)
-        movieSub.bind(to: ratingCellVM.input.movieSubject).disposed(by: ratingCellVM.bag)
-        movieSub.bind(to: summaryCellVM.input.movieSubject).disposed(by: summaryCellVM.bag)
-        movieSub.bind(to: celebrityCellVM.input.movieSubject).disposed(by: celebrityCellVM.bag)
-        movieSub.bind(to: photosCellVM.input.movieSubject).disposed(by: photosCellVM.bag)
-        let commentCellVMs = sub.popular_comments.map { (comment) -> CommentCellViewModel in
-            let commentCellVM = CommentCellViewModel()
-            Observable.just(comment).bind(to: commentCellVM.input.comment).disposed(by: commentCellVM.bag)
-            return commentCellVM
+        switch type {
+        case .main_info:
+            let mainCellVM = MainInfoCellViewModel()
+            movieSub.bind(to: mainCellVM.input.movieSubject).disposed(by: mainCellVM.bag)
+            return [mainCellVM]
+        case .rating:
+            let ratingCellVM = RatingCellViewModel()
+            movieSub.bind(to: ratingCellVM.input.movieSubject).disposed(by: ratingCellVM.bag)
+            return [ratingCellVM]
+        case .summary:
+            let summaryCellVM = SummaryCellViewModel()
+            movieSub.bind(to: summaryCellVM.input.movieSubject).disposed(by: summaryCellVM.bag)
+            return [summaryCellVM]
+        case .celebrity:
+            let celebrityCellVM = CelebrityCellViewModel()
+            movieSub.bind(to: celebrityCellVM.input.movieSubject).disposed(by: celebrityCellVM.bag)
+            return [celebrityCellVM]
+        case .photos:
+            let photosCellVM = PhotoCellViewModel()
+            movieSub.bind(to: photosCellVM.input.movieSubject).disposed(by: photosCellVM.bag)
+            return [photosCellVM]
+        case .popular_comment:
+            let commentCellVMs = sub.popular_comments.map { (comment) -> CommentCellViewModel in
+                let commentCellVM = CommentCellViewModel()
+                Observable.just(comment).bind(to: commentCellVM.input.comment).disposed(by: commentCellVM.bag)
+                return commentCellVM
+            }
+            return commentCellVMs
         }
-        let sections:Array<Section> = [Section(headerName: "", cellViewModels: [mainCellVM]),
-                                       Section(headerName: "評分：\(sub.rating?.average ?? 0)", cellViewModels: [ratingCellVM]),
-                                       Section(headerName: "劇情簡介：", cellViewModels: [summaryCellVM]),
-                                       Section(headerName: "演職員：", cellViewModels: [celebrityCellVM]),
-                                       Section(headerName: "劇照：", cellViewModels: [photosCellVM]),
-                                       Section(headerName: "熱評：", cellViewModels: commentCellVMs),]
-        return sections
     }
 }

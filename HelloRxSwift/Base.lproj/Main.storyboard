@@ -44,26 +44,35 @@
                                 <rect key="frame" x="0.0" y="191" width="414" height="671"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v1I-JG-PFV" customClass="LoadingIndicatorView" customModule="HelloRxSwift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="191" width="414" height="671"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="v1I-JG-PFV" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="0GR-V3-P1c"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KgG-Yy-ycW" secondAttribute="trailing" id="CZE-zT-ARN"/>
                             <constraint firstItem="KgG-Yy-ycW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Duo-NM-J4R"/>
                             <constraint firstItem="KgG-Yy-ycW" firstAttribute="top" secondItem="wSz-nD-Qhk" secondAttribute="bottom" id="EQf-ye-gWJ"/>
                             <constraint firstItem="Nsd-ty-1Zx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Guf-hp-5tv"/>
+                            <constraint firstItem="v1I-JG-PFV" firstAttribute="top" secondItem="wSz-nD-Qhk" secondAttribute="bottom" id="JQc-mU-xwh"/>
                             <constraint firstItem="Nsd-ty-1Zx" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="LwB-Ha-PEz"/>
                             <constraint firstItem="wSz-nD-Qhk" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="O9y-z6-mUS"/>
                             <constraint firstItem="wSz-nD-Qhk" firstAttribute="height" secondItem="Nsd-ty-1Zx" secondAttribute="height" multiplier="1.06" id="SvX-Jn-gIc"/>
                             <constraint firstItem="wSz-nD-Qhk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="UFJ-E5-xwX"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Nsd-ty-1Zx" secondAttribute="trailing" id="Y2H-wX-9tt"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="KgG-Yy-ycW" secondAttribute="bottom" id="cFW-de-eBp"/>
+                            <constraint firstItem="v1I-JG-PFV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="hSs-ZR-XsU"/>
                             <constraint firstItem="wSz-nD-Qhk" firstAttribute="top" secondItem="Nsd-ty-1Zx" secondAttribute="bottom" id="qJ8-Gg-9Nf"/>
+                            <constraint firstItem="v1I-JG-PFV" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="rjk-RF-p2O"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="3r7-6W-DrH"/>
                     <connections>
                         <outlet property="functionListBtn" destination="6Zb-y8-phV" id="pE1-dg-QUE"/>
+                        <outlet property="loadingIndicatorView" destination="v1I-JG-PFV" id="iOi-yw-fi9"/>
                         <outlet property="searchBar" destination="1vg-5N-txW" id="2xV-T0-eit"/>
                         <outlet property="tabView" destination="wSz-nD-Qhk" id="lrv-YM-UQT"/>
                         <outlet property="tableView" destination="KgG-Yy-ycW" id="2dq-pb-7oQ"/>
@@ -90,11 +99,19 @@
                                     <outlet property="delegate" destination="4z3-0x-ZRZ" id="0Ze-Jm-GUG"/>
                                 </connections>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zeu-kA-AeU" customClass="LoadingIndicatorView" customModule="HelloRxSwift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="37O-D1-BJI" firstAttribute="leading" secondItem="Zye-jF-ath" secondAttribute="leading" id="L8x-Ws-vw2"/>
                             <constraint firstItem="Zye-jF-ath" firstAttribute="bottom" secondItem="37O-D1-BJI" secondAttribute="bottom" id="Qcm-C9-2Gt"/>
+                            <constraint firstItem="zeu-kA-AeU" firstAttribute="top" secondItem="Zye-jF-ath" secondAttribute="top" id="Sl3-Dv-Hiv"/>
+                            <constraint firstItem="zeu-kA-AeU" firstAttribute="leading" secondItem="Zye-jF-ath" secondAttribute="leading" id="eQV-wt-CVc"/>
+                            <constraint firstItem="Zye-jF-ath" firstAttribute="trailing" secondItem="zeu-kA-AeU" secondAttribute="trailing" id="oqC-ch-pRc"/>
+                            <constraint firstItem="Zye-jF-ath" firstAttribute="bottom" secondItem="zeu-kA-AeU" secondAttribute="bottom" id="sMB-BP-0Xm"/>
                             <constraint firstItem="37O-D1-BJI" firstAttribute="top" secondItem="Zye-jF-ath" secondAttribute="top" id="two-Ns-Mwx"/>
                             <constraint firstItem="Zye-jF-ath" firstAttribute="trailing" secondItem="37O-D1-BJI" secondAttribute="trailing" id="zjL-vk-iLn"/>
                         </constraints>
@@ -102,6 +119,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="A8X-Lk-S6W"/>
                     <connections>
+                        <outlet property="loadingIndicatorView" destination="zeu-kA-AeU" id="YR8-cz-Ahf"/>
                         <outlet property="tableView" destination="37O-D1-BJI" id="TCk-n4-QxH"/>
                     </connections>
                 </viewController>
