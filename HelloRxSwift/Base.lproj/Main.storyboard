@@ -44,6 +44,10 @@
                                 <rect key="frame" x="0.0" y="191" width="414" height="671"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RCW-mV-GSv" customClass="TechnicalProblemView" customModule="HelloRxSwift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="191" width="414" height="671"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v1I-JG-PFV" customClass="LoadingIndicatorView" customModule="HelloRxSwift" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="191" width="414" height="671"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -52,9 +56,12 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="v1I-JG-PFV" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="0GR-V3-P1c"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="RCW-mV-GSv" secondAttribute="trailing" id="4Kr-pJ-5kT"/>
+                            <constraint firstItem="RCW-mV-GSv" firstAttribute="top" secondItem="wSz-nD-Qhk" secondAttribute="bottom" id="9eH-db-fXN"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KgG-Yy-ycW" secondAttribute="trailing" id="CZE-zT-ARN"/>
                             <constraint firstItem="KgG-Yy-ycW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Duo-NM-J4R"/>
                             <constraint firstItem="KgG-Yy-ycW" firstAttribute="top" secondItem="wSz-nD-Qhk" secondAttribute="bottom" id="EQf-ye-gWJ"/>
+                            <constraint firstItem="RCW-mV-GSv" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="G3S-Zf-qad"/>
                             <constraint firstItem="Nsd-ty-1Zx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Guf-hp-5tv"/>
                             <constraint firstItem="v1I-JG-PFV" firstAttribute="top" secondItem="wSz-nD-Qhk" secondAttribute="bottom" id="JQc-mU-xwh"/>
                             <constraint firstItem="Nsd-ty-1Zx" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="LwB-Ha-PEz"/>
@@ -64,6 +71,7 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Nsd-ty-1Zx" secondAttribute="trailing" id="Y2H-wX-9tt"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="KgG-Yy-ycW" secondAttribute="bottom" id="cFW-de-eBp"/>
                             <constraint firstItem="v1I-JG-PFV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="hSs-ZR-XsU"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="RCW-mV-GSv" secondAttribute="bottom" id="oc5-Ps-kl4"/>
                             <constraint firstItem="wSz-nD-Qhk" firstAttribute="top" secondItem="Nsd-ty-1Zx" secondAttribute="bottom" id="qJ8-Gg-9Nf"/>
                             <constraint firstItem="v1I-JG-PFV" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="rjk-RF-p2O"/>
                         </constraints>
@@ -76,6 +84,7 @@
                         <outlet property="searchBar" destination="1vg-5N-txW" id="2xV-T0-eit"/>
                         <outlet property="tabView" destination="wSz-nD-Qhk" id="lrv-YM-UQT"/>
                         <outlet property="tableView" destination="KgG-Yy-ycW" id="2dq-pb-7oQ"/>
+                        <outlet property="technicalProblemView" destination="RCW-mV-GSv" id="PTU-7d-Mc2"/>
                         <segue destination="4z3-0x-ZRZ" kind="show" identifier="MovieDetailedViewController" id="TFC-UB-24e"/>
                     </connections>
                 </viewController>
@@ -99,6 +108,10 @@
                                     <outlet property="delegate" destination="4z3-0x-ZRZ" id="0Ze-Jm-GUG"/>
                                 </connections>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lio-EB-37J" customClass="TechnicalProblemView" customModule="HelloRxSwift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zeu-kA-AeU" customClass="LoadingIndicatorView" customModule="HelloRxSwift" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="88" width="414" height="774"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -106,10 +119,14 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="Zye-jF-ath" firstAttribute="trailing" secondItem="lio-EB-37J" secondAttribute="trailing" id="JGY-v2-h54"/>
                             <constraint firstItem="37O-D1-BJI" firstAttribute="leading" secondItem="Zye-jF-ath" secondAttribute="leading" id="L8x-Ws-vw2"/>
                             <constraint firstItem="Zye-jF-ath" firstAttribute="bottom" secondItem="37O-D1-BJI" secondAttribute="bottom" id="Qcm-C9-2Gt"/>
                             <constraint firstItem="zeu-kA-AeU" firstAttribute="top" secondItem="Zye-jF-ath" secondAttribute="top" id="Sl3-Dv-Hiv"/>
+                            <constraint firstItem="lio-EB-37J" firstAttribute="top" secondItem="Zye-jF-ath" secondAttribute="top" id="XQw-tn-PIW"/>
                             <constraint firstItem="zeu-kA-AeU" firstAttribute="leading" secondItem="Zye-jF-ath" secondAttribute="leading" id="eQV-wt-CVc"/>
+                            <constraint firstItem="Zye-jF-ath" firstAttribute="bottom" secondItem="lio-EB-37J" secondAttribute="bottom" id="h5b-dm-fqg"/>
+                            <constraint firstItem="lio-EB-37J" firstAttribute="leading" secondItem="Zye-jF-ath" secondAttribute="leading" id="iQ1-PI-TJX"/>
                             <constraint firstItem="Zye-jF-ath" firstAttribute="trailing" secondItem="zeu-kA-AeU" secondAttribute="trailing" id="oqC-ch-pRc"/>
                             <constraint firstItem="Zye-jF-ath" firstAttribute="bottom" secondItem="zeu-kA-AeU" secondAttribute="bottom" id="sMB-BP-0Xm"/>
                             <constraint firstItem="37O-D1-BJI" firstAttribute="top" secondItem="Zye-jF-ath" secondAttribute="top" id="two-Ns-Mwx"/>
@@ -121,6 +138,7 @@
                     <connections>
                         <outlet property="loadingIndicatorView" destination="zeu-kA-AeU" id="YR8-cz-Ahf"/>
                         <outlet property="tableView" destination="37O-D1-BJI" id="TCk-n4-QxH"/>
+                        <outlet property="technicalProblemView" destination="lio-EB-37J" id="gWW-yj-FCh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FA7-AU-vPO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

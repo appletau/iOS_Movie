@@ -41,30 +41,38 @@ enum MovieDetailedCellContent:Int ,CaseIterable {
 class MovieDetailedViewModel:ViewModelType {
     
     struct Input {
-        let subjectID:AnyObserver<String>
+        let subjectID:BehaviorRelay<String>
     }
     
     struct Output {
         let sections:BehaviorRelay<[Section]>
         let movieTitle:BehaviorRelay<String>
         let loadingMovieIsFinished:Driver<Bool>
+        let errorOccurred:Driver<Bool>
     }
     
     let input: Input
     let output: Output
     
-    private let idSub = PublishSubject<String>()
+    private let idRelay = BehaviorRelay<String>(value: "")
     private let sectionsRelay = BehaviorRelay<[Section]>(value: [])
     private let movieTitleRelay = BehaviorRelay<String>(value:"")
+    private let loadingMovieIsFinishedRelay = BehaviorRelay(value: false)
+    private let errorOccurredRelay = BehaviorRelay<Bool>(value: false)
+    private let endRefreshSub = PublishSubject<Void>()
     private let bag = DisposeBag()
     
     init() {
-        let loadingMovieIsFinished = sectionsRelay.asDriver().map {$0.count > 0 ? true : false}
-        self.input = Input(subjectID: idSub.asObserver())
-        self.output = Output(sections: sectionsRelay, movieTitle: movieTitleRelay, loadingMovieIsFinished: loadingMovieIsFinished)
+        self.input = Input(subjectID: idRelay)
+        self.output = Output(sections: sectionsRelay, movieTitle: movieTitleRelay,
+                             loadingMovieIsFinished: loadingMovieIsFinishedRelay.asDriver(),
+                             errorOccurred: errorOccurredRelay.asDriver())
         
-        idSub.subscribe(onNext: { (id) in
-            self.searchMovie(id: id)
+        idRelay.subscribe(onNext: { [weak self] (id) in
+            guard let self = self else {return}
+            self.loadingMovieIsFinishedRelay.accept(false)
+            self.errorOccurredRelay.accept(false)
+            if self.idRelay.value != "" {self.searchMovie(id: id)}
         }).disposed(by: bag)
     }
 }
@@ -77,9 +85,15 @@ extension MovieDetailedViewModel {
         //get
         APIService.shared.request(Movie.GetMovie(id: id, parameters: ["apikey":apiKey])).subscribe(onSuccess: {[weak self] (movieSubject) in
             guard let self = self else {return}
+            self.endRefreshSub.onNext(())
+            self.loadingMovieIsFinishedRelay.accept(true)
             self.movieTitleRelay.accept(movieSubject.title)
             self.sectionsRelay.accept(self.convertToSction(withMovieSubject: movieSubject))
-            }).disposed(by: bag)
+            }, onError: { _ in
+                self.endRefreshSub.onNext(())
+                self.errorOccurredRelay.accept(true)
+                self.loadingMovieIsFinishedRelay.accept(true)
+        }).disposed(by: bag)
     }
     
     private func convertToSction(withMovieSubject sub:NormalSubject) -> [Section] {
@@ -124,5 +138,15 @@ extension MovieDetailedViewModel {
             }
             return commentCellVMs
         }
+    }
+}
+
+extension MovieDetailedViewModel:Refreshable {
+    func refreshData() {
+        searchMovie(id: idRelay.value)
+    }
+    
+    var endRefresh: PublishSubject<Void> {
+        return endRefreshSub
     }
 }

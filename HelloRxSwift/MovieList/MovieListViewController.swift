@@ -28,15 +28,16 @@ class MovieListViewController: UIViewController {
     @IBOutlet private weak var tabView: ScrollableTabView!
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet weak var loadingIndicatorView: LoadingIndicatorView!
+    @IBOutlet weak var technicalProblemView: TechnicalProblemView!
     
     let tabData:Observable<[ScrollableTabViewData]> = Observable.just(MovieListType.allCases.map {ScrollableTabData(title: $0.rawValue)})
     private let viewModel = MovieListViewModel()
     private let bag = DisposeBag()
     
     lazy var refreshControl: RxRefreshControl = {
-       return RxRefreshControl(viewModel)
+        return RxRefreshControl(viewModel)
     }()
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,26 +68,22 @@ extension MovieListViewController {
         
         tableView.rx.itemSelected.subscribe(onNext: {[weak self] (indexPath) in
             self?.performSegue(withIdentifier: String(describing: MovieDetailedViewController.self) , sender: self)
-            }).disposed(by: bag)
+        }).disposed(by: bag)
         
-        viewModel.output.movieListCellVMsRelay.bind(to: tableView.rx.items(cellIdentifier: String(describing: MovieListCell.self), cellType: MovieListCell.self)) { (row, element, cell) in
+        viewModel.output.movieListCellVMsRelay.bind(to: tableView.rx.items(cellIdentifier: MovieListCell.identifier, cellType: MovieListCell.self)) { (row, element, cell) in
             cell.setup(viewModel: element)
         }.disposed(by: bag)
         
         viewModel.output.loadingMovieListIsFinished.drive(onNext: { [weak self] (isLoaded) in
             guard let self = self else {return}
-            if isLoaded {
-                self.tableView.scrollToTop()
-                self.loadingIndicatorView.stopAnimating()
-            } else {
-                self.loadingIndicatorView.startAnimating()
-            }
+            isLoaded ? self.loadingIndicatorView.stopAnimating() : self.loadingIndicatorView.startAnimating()
         }).disposed(by: bag)
         
+        viewModel.output.errorOccurred.map {!$0}.drive(technicalProblemView.rx.isHidden).disposed(by: bag)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let vc = segue.destination as? MovieDetailedViewController, let row = tableView.indexPathForSelectedRow?.row else {return}
-        viewModel.output.movieListCellVMsRelay.compactMap {$0[row].input.movieSubject.value?.id}.bind(to: vc.viewModel.input.subjectID).disposed(by: bag)
+        viewModel.output.movieListCellVMsRelay.compactMap {$0[row].input.movieSubject.value?.id}.bind(to: vc.viewModel.input.subjectID).disposed(by: DisposeBag())
     }
 }

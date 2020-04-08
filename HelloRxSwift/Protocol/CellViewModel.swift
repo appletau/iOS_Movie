@@ -11,6 +11,4 @@ import RxSwift
 import RxCocoa
 
 protocol CellViewModel {
-//    associatedtype binderType
-//    var inputBinder:BehaviorRelay<binderType> {get}
 }

@@ -20,6 +20,7 @@ class MovieListViewModel:ViewModelType {
     struct Output {
         let movieListCellVMsRelay:BehaviorRelay<[MovieListCellViewModel]>
         let loadingMovieListIsFinished:Driver<Bool>
+        let errorOccurred:Driver<Bool>
     }
     
     let input: Input
@@ -28,16 +29,20 @@ class MovieListViewModel:ViewModelType {
     private let movieListTypeRelay = BehaviorRelay<MovieListType?>(value: nil)
     private let movieListCellVMsRelay = BehaviorRelay<[MovieListCellViewModel]>(value: [])
     private let endRefreshSub = PublishSubject<Void>()
+    private let isFinishedLoadingListRelay = BehaviorRelay<Bool>(value: false)
+    private let errorOccurredRelay = BehaviorRelay<Bool>(value: false)
     private let bag = DisposeBag()
     
     init() {
-        let isFinishedLoadingList = self.movieListCellVMsRelay.asDriver().map {$0.count > 0 ? true : false}
-        self.output = Output(movieListCellVMsRelay: movieListCellVMsRelay,
-                             loadingMovieListIsFinished: isFinishedLoadingList)
         self.input = Input(MovieListType: movieListTypeRelay)
+        self.output = Output(movieListCellVMsRelay: movieListCellVMsRelay,
+                             loadingMovieListIsFinished: isFinishedLoadingListRelay.asDriver(),
+                             errorOccurred: errorOccurredRelay.asDriver())
         movieListTypeRelay.subscribe(onNext: {[weak self] (type) in
-            guard let type = type else {return}
-            self?.selectMovieList(type: type)
+            guard let type = type, let self = self else {return}
+            self.errorOccurredRelay.accept(false)
+            self.isFinishedLoadingListRelay.accept(false)
+            self.selectMovieList(type: type)
         }).disposed(by: bag)
     }
 }
@@ -64,13 +69,18 @@ extension MovieListViewModel {
         // clear
         movieListCellVMsRelay.accept([])
         // get
-        APIService.shared.request(Movie.GetMovieList(type: type, parameters: ["apikey":apiKey])).map({ [weak self] (list) -> [MovieListCellViewModel] in
-            guard let self = self else {return []}
-            self.endRefreshSub.onNext(())
+        APIService.shared.request(Movie.GetMovieList(type: type, parameters: ["apikey":apiKey])).subscribe(onSuccess: { [weak self] (list) in
+            guard let self = self else {return}
             let subList = self.getMovieSubjects(list: list)
             let cellViewModels = self.convertToCellVMs(withSubjectList: subList)
-            return cellViewModels
-        }).asObservable().bind(to: self.movieListCellVMsRelay).disposed(by: bag)
+            self.movieListCellVMsRelay.accept(cellViewModels)
+            self.endRefreshSub.onNext(())
+            self.isFinishedLoadingListRelay.accept(true)
+            }, onError: { _ in
+                self.endRefreshSub.onNext(())
+                self.errorOccurredRelay.accept(true)
+                self.isFinishedLoadingListRelay.accept(true)
+        }).disposed(by: bag)
     }
     
     private func getMovieSubjects<T:MovieList>(list:T) -> [NormalSubject] {
@@ -97,10 +107,10 @@ extension MovieListViewModel:Refreshable {
     func refreshData() {
         selectMovieList(type: movieListTypeRelay.value!)
     }
-
+    
     var endRefresh: PublishSubject<Void> {
-        return self.endRefreshSub
+        return endRefreshSub
     }
-
-
+    
+    
 }

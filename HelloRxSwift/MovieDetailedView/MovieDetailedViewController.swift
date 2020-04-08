@@ -15,15 +15,17 @@ import RxDataSources
 class MovieDetailedViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     @IBOutlet weak var loadingIndicatorView: LoadingIndicatorView!
+    @IBOutlet weak var technicalProblemView: TechnicalProblemView!
     
     let viewModel = MovieDetailedViewModel()
     private let bag = DisposeBag()
     
+    lazy var refreshControl: RxRefreshControl = {
+        return RxRefreshControl(viewModel)
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.refreshControl?.rx.controlEvent(.valueChanged).subscribe(onNext: { () in
-            print("hi")
-            }).disposed(by: bag)
         setupUI()
         registCell()
         initBinding()
@@ -69,6 +71,7 @@ extension MovieDetailedViewController:UITableViewDelegate {
 extension MovieDetailedViewController {
     
     private func setupUI() {
+        tableView.refreshControl = refreshControl
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "back_arrow"),
                                                            style: .done,
@@ -106,7 +109,9 @@ extension MovieDetailedViewController {
         viewModel.output.loadingMovieIsFinished.drive(onNext: { [weak self] (isLoaded) in
             guard let self = self else {return}
             isLoaded ? self.loadingIndicatorView.stopAnimating() : self.loadingIndicatorView.startAnimating()
-            }).disposed(by: bag)
+        }).disposed(by: bag)
+        
+        viewModel.output.errorOccurred.map {!$0}.drive(technicalProblemView.rx.isHidden).disposed(by: bag)
         
         navigationItem.leftBarButtonItem?.rx.tap.subscribe(onNext: {[weak self] (_) in
             self?.navigationController?.popViewController(animated: true)

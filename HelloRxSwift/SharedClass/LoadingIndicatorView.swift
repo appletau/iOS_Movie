@@ -23,7 +23,6 @@ class LoadingIndicatorView:UIView {
     override init(frame: CGRect) {
         super.init(frame: CGRect())
         isHidden = true
-        translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 0.7)
     }
     

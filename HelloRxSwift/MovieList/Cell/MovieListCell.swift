@@ -19,6 +19,7 @@ class MovieListCell: UITableViewCell {
     @IBOutlet weak var cornerView: UIView!
     @IBOutlet weak var shadowView: UIView!
     
+    static let identifier = String(describing: MovieListCell.self)
     private var bag = DisposeBag()
     
     override func layoutSubviews() {
@@ -52,7 +53,6 @@ class MovieListCell: UITableViewCell {
         viewModel.output.duration.drive(self.movieDurationLabel.rx.text).disposed(by: bag)
         viewModel.output.imageURL.drive(onNext: { [weak self] (url) in
             self?.movieImageView.kf.setImage(with: url)
-            }).disposed(by: bag)
+        }).disposed(by: bag)
     }
-    
 }
