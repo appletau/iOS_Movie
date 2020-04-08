@@ -95,7 +95,7 @@
         <!--Movie Detailed View Controller-->
         <scene sceneID="nVu-7f-7Q0">
             <objects>
-                <viewController id="4z3-0x-ZRZ" customClass="MovieDetailedViewController" customModule="HelloRxSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MovieDetailedViewController" id="4z3-0x-ZRZ" customClass="MovieDetailedViewController" customModule="HelloRxSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9ch-KN-4b3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

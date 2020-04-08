@@ -17,7 +17,7 @@ class MovieDetailedViewController: UIViewController {
     @IBOutlet private weak var loadingIndicatorView: LoadingIndicatorView!
     @IBOutlet private weak var technicalProblemView: TechnicalProblemView!
     
-    let viewModel = MovieDetailedViewModel()
+    private let viewModel = MovieDetailedViewModel()
     private let bag = DisposeBag()
     
     lazy var refreshControl: RxRefreshControl = {
@@ -70,6 +70,10 @@ extension MovieDetailedViewController:UITableViewDelegate {
 
 extension MovieDetailedViewController {
     
+    func setMovieID(_ id:String) {
+        self.viewModel.setMovieID(id)
+    }
+    
     private func setupUI() {
         tableView.refreshControl = refreshControl
         self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -120,7 +124,7 @@ extension MovieDetailedViewController {
     
     private func getCellIdentifier(for sectionIndex:Int) -> String {
         switch MovieDetailedCellContent(rawValue:sectionIndex) {
-        case .main_info:
+        case .mainInfo:
             return MainInfoCell.identifier
         case .rating:
             return RatingCell.identifier
@@ -130,7 +134,7 @@ extension MovieDetailedViewController {
             return CelebrityCell.identifier
         case .photos:
             return PhotosCell.identifier
-        case .popular_comment:
+        case .popularComment:
             return CommentCell.identifier
         case .none:
             fatalError("Out Of Case")

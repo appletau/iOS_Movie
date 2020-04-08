@@ -45,13 +45,17 @@ class MovieListViewController: UIViewController {
         registerCell()
         binding()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
 }
 
 extension MovieListViewController {
     
     private func setupUI() {
         tableView.refreshControl = refreshControl
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
         searchBar.searchTextField.backgroundColor = .white
         searchBar.barTintColor = UIColor(red: 38/255, green: 171/255, blue: 82/255, alpha: 1)
         functionListBtn.backgroundColor = UIColor(red: 38/255, green: 171/255, blue: 82/255, alpha: 1)
@@ -67,7 +71,9 @@ extension MovieListViewController {
         tabView.didTapItem.compactMap {($0?.title)}.compactMap{MovieListType(rawValue: $0)}.bind(to: viewModel.input.MovieListType).disposed(by: bag)
         
         tableView.rx.itemSelected.subscribe(onNext: {[weak self] (indexPath) in
-            self?.performSegue(withIdentifier: String(describing: MovieDetailedViewController.self) , sender: self)
+            guard let self = self, let movieID = self.viewModel.output.movieListCellVMsRelay.value[indexPath.row].input.movieSubject.value?.id else {return}
+            let vc = self.setupMovieDetailedVC(id: movieID)
+            self.navigationController?.pushViewController(vc, animated: false)
         }).disposed(by: bag)
         
         viewModel.output.movieListCellVMsRelay.bind(to: tableView.rx.items(cellIdentifier: MovieListCell.identifier, cellType: MovieListCell.self)) { (row, element, cell) in
@@ -82,8 +88,9 @@ extension MovieListViewController {
         viewModel.output.errorOccurred.map {!$0}.drive(technicalProblemView.rx.isHidden).disposed(by: bag)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let vc = segue.destination as? MovieDetailedViewController, let row = tableView.indexPathForSelectedRow?.row else {return}
-        viewModel.output.movieListCellVMsRelay.compactMap {$0[row].input.movieSubject.value?.id}.bind(to: vc.viewModel.input.subjectID).disposed(by: DisposeBag())
+    private func setupMovieDetailedVC(id:String) -> MovieDetailedViewController {
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: String(describing: MovieDetailedViewController.self)) as! MovieDetailedViewController
+        vc.setMovieID(id)
+        return vc
     }
 }

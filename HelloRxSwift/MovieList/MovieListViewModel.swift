@@ -14,7 +14,7 @@ import Moya
 class MovieListViewModel:ViewModelType {
     
     struct Input {
-        let MovieListType:BehaviorRelay<MovieListType?>
+        let MovieListType:AnyObserver<MovieListType>
     }
     
     struct Output {
@@ -26,20 +26,22 @@ class MovieListViewModel:ViewModelType {
     let input: Input
     let output: Output
     
-    private let movieListTypeRelay = BehaviorRelay<MovieListType?>(value: nil)
+    private let movieListTypeSub = PublishSubject<MovieListType>()
     private let movieListCellVMsRelay = BehaviorRelay<[MovieListCellViewModel]>(value: [])
     private let endRefreshSub = PublishSubject<Void>()
     private let isFinishedLoadingListRelay = BehaviorRelay<Bool>(value: false)
     private let errorOccurredRelay = BehaviorRelay<Bool>(value: false)
     private let bag = DisposeBag()
+    private var movieListType = MovieListType.top250
     
     init() {
-        self.input = Input(MovieListType: movieListTypeRelay)
+        self.input = Input(MovieListType: movieListTypeSub.asObserver())
         self.output = Output(movieListCellVMsRelay: movieListCellVMsRelay,
                              loadingMovieListIsFinished: isFinishedLoadingListRelay.asDriver(),
                              errorOccurred: errorOccurredRelay.asDriver())
-        movieListTypeRelay.subscribe(onNext: {[weak self] (type) in
-            guard let type = type, let self = self else {return}
+        movieListTypeSub.subscribe(onNext: {[weak self] (type) in
+            guard let self = self else {return}
+            self.movieListType = type
             self.errorOccurredRelay.accept(false)
             self.isFinishedLoadingListRelay.accept(false)
             self.selectMovieList(type: type)
@@ -105,7 +107,7 @@ extension MovieListViewModel {
 
 extension MovieListViewModel:Refreshable {
     func refreshData() {
-        selectMovieList(type: movieListTypeRelay.value!)
+        selectMovieList(type: self.movieListType)
     }
     
     var endRefresh: PublishSubject<Void> {

@@ -13,16 +13,16 @@ import Moya
 import RxDataSources
 
 enum MovieDetailedCellContent:Int ,CaseIterable {
-    case main_info
+    case mainInfo
     case rating
     case summary
     case celebrity
     case photos
-    case popular_comment
+    case popularComment
     
     func getHeaderName(withString string:String = "") ->String {
         switch self {
-        case .main_info:
+        case .mainInfo:
             return "" + string
         case .rating:
             return "評分：" + string
@@ -32,7 +32,7 @@ enum MovieDetailedCellContent:Int ,CaseIterable {
             return "演職員" + string
         case .photos:
             return "劇照：" + string
-        case .popular_comment:
+        case .popularComment:
             return "熱評：" + string
         }
     }
@@ -41,7 +41,6 @@ enum MovieDetailedCellContent:Int ,CaseIterable {
 class MovieDetailedViewModel:ViewModelType {
     
     struct Input {
-        let subjectID:BehaviorRelay<String>
     }
     
     struct Output {
@@ -54,34 +53,36 @@ class MovieDetailedViewModel:ViewModelType {
     let input: Input
     let output: Output
     
-    private let idRelay = BehaviorRelay<String>(value: "")
     private let sectionsRelay = BehaviorRelay<[Section]>(value: [])
     private let movieTitleRelay = BehaviorRelay<String>(value:"")
     private let loadingMovieIsFinishedRelay = BehaviorRelay(value: false)
     private let errorOccurredRelay = BehaviorRelay<Bool>(value: false)
     private let endRefreshSub = PublishSubject<Void>()
     private let bag = DisposeBag()
+    private var movieID:String = "" {
+        didSet {
+            self.searchMovie(id: movieID)
+        }
+    }
     
     init() {
-        self.input = Input(subjectID: idRelay)
+        self.input = Input()
         self.output = Output(sections: sectionsRelay, movieTitle: movieTitleRelay,
                              loadingMovieIsFinished: loadingMovieIsFinishedRelay.asDriver(),
                              errorOccurred: errorOccurredRelay.asDriver())
-        
-        idRelay.subscribe(onNext: { [weak self] (id) in
-            guard let self = self else {return}
-            self.loadingMovieIsFinishedRelay.accept(false)
-            self.errorOccurredRelay.accept(false)
-            if self.idRelay.value != "" {self.searchMovie(id: id)}
-        }).disposed(by: bag)
     }
 }
 
 extension MovieDetailedViewModel {
     
+    func setMovieID(_ id:String) {
+        self.movieID = id 
+    }
+    
     private func searchMovie(id:String) {
         //clear
         sectionsRelay.accept([])
+        self.errorOccurredRelay.accept(false)
         //get
         APIService.shared.request(Movie.GetMovie(id: id, parameters: ["apikey":apiKey])).subscribe(onSuccess: {[weak self] (movieSubject) in
             guard let self = self else {return}
@@ -110,7 +111,7 @@ extension MovieDetailedViewModel {
     private func createCellVMs(type:MovieDetailedCellContent, withMovieSubject sub:NormalSubject) -> [CellViewModel]{
         let movieSub = Observable.just(sub)
         switch type {
-        case .main_info:
+        case .mainInfo:
             let mainCellVM = MainInfoCellViewModel()
             movieSub.bind(to: mainCellVM.input.movieSubject).disposed(by: mainCellVM.bag)
             return [mainCellVM]
@@ -130,7 +131,7 @@ extension MovieDetailedViewModel {
             let photosCellVM = PhotoCellViewModel()
             movieSub.bind(to: photosCellVM.input.movieSubject).disposed(by: photosCellVM.bag)
             return [photosCellVM]
-        case .popular_comment:
+        case .popularComment:
             let commentCellVMs = sub.popular_comments.map { (comment) -> CommentCellViewModel in
                 let commentCellVM = CommentCellViewModel()
                 Observable.just(comment).bind(to: commentCellVM.input.comment).disposed(by: commentCellVM.bag)
@@ -143,7 +144,7 @@ extension MovieDetailedViewModel {
 
 extension MovieDetailedViewModel:Refreshable {
     func refreshData() {
-        searchMovie(id: idRelay.value)
+        searchMovie(id: movieID)
     }
     
     var endRefresh: PublishSubject<Void> {
