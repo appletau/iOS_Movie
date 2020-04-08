@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 class RatingCell: UITableViewCell,CellConfigurable {
-    @IBOutlet weak var ratingStarView: CosmosView!
+    @IBOutlet private weak var ratingStarView: CosmosView!
     
     static let identifier = String(describing: RatingCell.self)
     private var bag = DisposeBag()

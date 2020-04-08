@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 
 class CelebrityCell: UITableViewCell,CellConfigurable {
-    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet private weak var collectionView: UICollectionView!
     
     static let identifier = String(describing: CelebrityCell.self)
     var celebrities:Array<Celebrity> = []

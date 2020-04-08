@@ -13,9 +13,9 @@ import Moya
 import RxDataSources
 
 class MovieDetailedViewController: UIViewController {
-    @IBOutlet var tableView: UITableView!
-    @IBOutlet weak var loadingIndicatorView: LoadingIndicatorView!
-    @IBOutlet weak var technicalProblemView: TechnicalProblemView!
+    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private weak var loadingIndicatorView: LoadingIndicatorView!
+    @IBOutlet private weak var technicalProblemView: TechnicalProblemView!
     
     let viewModel = MovieDetailedViewModel()
     private let bag = DisposeBag()

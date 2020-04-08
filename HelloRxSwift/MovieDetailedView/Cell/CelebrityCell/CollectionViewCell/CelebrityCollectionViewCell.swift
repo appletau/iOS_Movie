@@ -9,8 +9,8 @@
 import UIKit
 
 class CelebrityCollectionViewCell: UICollectionViewCell {
-    @IBOutlet var photoImageView: UIImageView!
-    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet private var photoImageView: UIImageView!
+    @IBOutlet private var nameLabel: UILabel!
     
     static let identifier = String(describing: CelebrityCollectionViewCell.self)
     

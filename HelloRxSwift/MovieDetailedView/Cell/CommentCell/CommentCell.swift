@@ -12,11 +12,11 @@ import RxSwift
 import Kingfisher
 
 class CommentCell: UITableViewCell,CellConfigurable,CellExpandable {
-    @IBOutlet weak var photoImageView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var usefulCountLabel: UILabel!
-    @IBOutlet weak var commentLabel: UILabel!
+    @IBOutlet private weak var photoImageView: UIImageView!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var dateLabel: UILabel!
+    @IBOutlet private weak var usefulCountLabel: UILabel!
+    @IBOutlet private weak var commentLabel: UILabel!
     @IBOutlet weak var expandBtn: UIButton!
     
     static let identifier = String(describing: CommentCell.self)

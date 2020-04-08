@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 
 class PhotosCollectionViewCell: UICollectionViewCell {
-    @IBOutlet var photoImageView: UIImageView!
+    @IBOutlet private var photoImageView: UIImageView!
     
     static let identifier = String(describing: PhotosCollectionViewCell.self)
     

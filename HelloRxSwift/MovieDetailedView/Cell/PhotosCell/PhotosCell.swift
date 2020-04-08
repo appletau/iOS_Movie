@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 class PhotosCell: UITableViewCell,CellConfigurable {
-    @IBOutlet var collectionView: UICollectionView!
+    @IBOutlet private var collectionView: UICollectionView!
     
     static let identifier = String(describing: PhotosCell.self)
     var photos:Array<Photo> = []

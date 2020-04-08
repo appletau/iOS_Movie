@@ -27,8 +27,8 @@ class MovieListViewController: UIViewController {
     @IBOutlet private weak var functionListBtn: UIButton!
     @IBOutlet private weak var tabView: ScrollableTabView!
     @IBOutlet private weak var tableView: UITableView!
-    @IBOutlet weak var loadingIndicatorView: LoadingIndicatorView!
-    @IBOutlet weak var technicalProblemView: TechnicalProblemView!
+    @IBOutlet private weak var loadingIndicatorView: LoadingIndicatorView!
+    @IBOutlet private weak var technicalProblemView: TechnicalProblemView!
     
     let tabData:Observable<[ScrollableTabViewData]> = Observable.just(MovieListType.allCases.map {ScrollableTabData(title: $0.rawValue)})
     private let viewModel = MovieListViewModel()

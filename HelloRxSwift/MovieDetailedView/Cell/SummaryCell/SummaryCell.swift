@@ -11,7 +11,7 @@ import RxCocoa
 import RxSwift
 
 class SummaryCell: UITableViewCell,CellConfigurable,CellExpandable {
-    @IBOutlet weak var summaryLabel: UILabel!
+    @IBOutlet private weak var summaryLabel: UILabel!
     @IBOutlet weak var expandBtn: UIButton!
     
     static let identifier = String(describing: SummaryCell.self)

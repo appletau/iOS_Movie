@@ -11,13 +11,13 @@ import RxSwift
 import Kingfisher
 
 class MovieListCell: UITableViewCell {
-    @IBOutlet weak var movieImageView: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var categoryLabel: UILabel!
-    @IBOutlet weak var publishDateLabel: UILabel!
-    @IBOutlet weak var movieDurationLabel: UILabel!
-    @IBOutlet weak var cornerView: UIView!
-    @IBOutlet weak var shadowView: UIView!
+    @IBOutlet private weak var movieImageView: UIImageView!
+    @IBOutlet private weak var titleLabel: UILabel!
+    @IBOutlet private weak var categoryLabel: UILabel!
+    @IBOutlet private weak var publishDateLabel: UILabel!
+    @IBOutlet private weak var movieDurationLabel: UILabel!
+    @IBOutlet private weak var cornerView: UIView!
+    @IBOutlet private weak var shadowView: UIView!
     
     static let identifier = String(describing: MovieListCell.self)
     private var bag = DisposeBag()
