@@ -14,36 +14,30 @@ import Moya
 class MovieListViewModel:ViewModelType {
     
     struct Input {
-        let MovieListType:AnyObserver<MovieListType>
+        let MovieListType:BehaviorRelay<MovieListType?>
     }
     
     struct Output {
         let movieListCellVMsRelay:BehaviorRelay<[MovieListCellViewModel]>
-        let loadingMovieListIsFinished:Driver<Bool>
         let errorOccurred:Driver<Bool>
     }
     
     let input: Input
     let output: Output
     
-    private let movieListTypeSub = PublishSubject<MovieListType>()
+    private let movieListTypeSub = BehaviorRelay<MovieListType?>(value: nil)
     private let movieListCellVMsRelay = BehaviorRelay<[MovieListCellViewModel]>(value: [])
     private let endRefreshSub = PublishSubject<Void>()
-    private let isFinishedLoadingListRelay = BehaviorRelay<Bool>(value: false)
     private let errorOccurredRelay = BehaviorRelay<Bool>(value: false)
     private let bag = DisposeBag()
-    private var movieListType = MovieListType.top250
     
     init() {
-        self.input = Input(MovieListType: movieListTypeSub.asObserver())
+        self.input = Input(MovieListType: movieListTypeSub)
         self.output = Output(movieListCellVMsRelay: movieListCellVMsRelay,
-                             loadingMovieListIsFinished: isFinishedLoadingListRelay.asDriver(),
                              errorOccurred: errorOccurredRelay.asDriver())
         movieListTypeSub.subscribe(onNext: {[weak self] (type) in
-            guard let self = self else {return}
-            self.movieListType = type
+            guard let type = type, let self = self else {return}
             self.errorOccurredRelay.accept(false)
-            self.isFinishedLoadingListRelay.accept(false)
             self.selectMovieList(type: type)
         }).disposed(by: bag)
     }
@@ -77,11 +71,9 @@ extension MovieListViewModel {
             let cellViewModels = self.convertToCellVMs(withSubjectList: subList)
             self.movieListCellVMsRelay.accept(cellViewModels)
             self.endRefreshSub.onNext(())
-            self.isFinishedLoadingListRelay.accept(true)
             }, onError: { _ in
                 self.endRefreshSub.onNext(())
                 self.errorOccurredRelay.accept(true)
-                self.isFinishedLoadingListRelay.accept(true)
         }).disposed(by: bag)
     }
     
@@ -107,7 +99,11 @@ extension MovieListViewModel {
 
 extension MovieListViewModel:Refreshable {
     func refreshData() {
-        selectMovieList(type: self.movieListType)
+        guard let type = movieListTypeSub.value else {
+            endRefresh.onNext(())
+            return
+        }
+        selectMovieList(type: type)
     }
     
     var endRefresh: PublishSubject<Void> {

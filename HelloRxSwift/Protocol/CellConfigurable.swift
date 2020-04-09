@@ -10,4 +10,7 @@ import Foundation
 
 protocol CellConfigurable {
     func setup(viewModel: CellViewModel)
+    func showSkeleton()
+    func hideSkeleton()
 }
+

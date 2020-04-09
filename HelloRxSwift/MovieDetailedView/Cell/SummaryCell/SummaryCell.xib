@@ -24,25 +24,42 @@
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <state key="normal" title="(展開)"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="NO"/>
+                        </userDefinedRuntimeAttributes>
                     </button>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O0M-bZ-2sk" userLabel="summaryLabel">
-                        <rect key="frame" x="0.0" y="0.0" width="382" height="75"/>
-                        <string key="text">testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest</string>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O0M-bZ-2sk" userLabel="summaryLabel">
+                        <rect key="frame" x="0.0" y="20" width="382" height="55"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="lastLineFillPercent">
+                                <integer key="value" value="80"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="linesCornerRadius">
+                                <integer key="value" value="10"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="skeletonLineSpacing">
+                                <real key="value" value="0.0"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="O0M-bZ-2sk" firstAttribute="height" secondItem="H2p-sc-9uM" secondAttribute="height" constant="-20" id="1rc-F7-ggF"/>
                     <constraint firstItem="wjH-Zj-fzj" firstAttribute="leading" secondItem="O0M-bZ-2sk" secondAttribute="trailing" id="5SR-fz-WwY"/>
                     <constraint firstAttribute="trailing" secondItem="wjH-Zj-fzj" secondAttribute="trailing" id="k4I-VJ-G8Z"/>
                     <constraint firstAttribute="bottom" secondItem="wjH-Zj-fzj" secondAttribute="bottom" id="lz2-6G-AOk"/>
                     <constraint firstItem="O0M-bZ-2sk" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="nof-C8-4nY"/>
-                    <constraint firstItem="O0M-bZ-2sk" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="sCE-UX-cd8"/>
-                    <constraint firstAttribute="bottom" secondItem="O0M-bZ-2sk" secondAttribute="bottom" id="v60-WE-Ygz"/>
+                    <constraint firstItem="O0M-bZ-2sk" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" constant="10" id="srf-Bd-opA"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+            </userDefinedRuntimeAttributes>
             <connections>
                 <outlet property="expandBtn" destination="wjH-Zj-fzj" id="1hB-R3-NkP"/>
                 <outlet property="summaryLabel" destination="O0M-bZ-2sk" id="Kja-hn-J8y"/>

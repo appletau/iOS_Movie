@@ -22,10 +22,6 @@ class MovieListCell: UITableViewCell {
     static let identifier = String(describing: MovieListCell.self)
     private var bag = DisposeBag()
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         shadowView.layer.shadowColor = UIColor.black.cgColor
@@ -54,5 +50,15 @@ class MovieListCell: UITableViewCell {
         viewModel.output.imageURL.drive(onNext: { [weak self] (url) in
             self?.movieImageView.kf.setImage(with: url)
         }).disposed(by: bag)
+    }
+    
+    func showSkeleton() {
+        self.isUserInteractionEnabled = false
+        [movieImageView,titleLabel,categoryLabel,publishDateLabel,movieDurationLabel].forEach {$0?.showSkeleton()}
+    }
+    
+    func hideSkeleton() {
+        self.isUserInteractionEnabled = true
+        [movieImageView,titleLabel,categoryLabel,publishDateLabel,movieDurationLabel].forEach {$0?.hideSkeleton()}
     }
 }

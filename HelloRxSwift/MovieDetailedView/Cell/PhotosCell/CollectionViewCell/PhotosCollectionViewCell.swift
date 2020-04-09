@@ -14,14 +14,18 @@ class PhotosCollectionViewCell: UICollectionViewCell {
     
     static let identifier = String(describing: PhotosCollectionViewCell.self)
     
-    func setup(photo:Photo) {
-        photoImageView.kf.setImage(with: photo.image)
-    }
-    
     func setup(viewModel:PhotosCollectionCellViewModel) {
         viewModel.output.photoURL.drive(onNext: { (url) in
             self.photoImageView.kf.setImage(with: url)
         }).disposed(by: viewModel.bag)
+    }
+    
+    func showSkeleton() {
+        photoImageView.showSkeleton()
+    }
+    
+    func hideSkeleton() {
+        photoImageView.hideSkeleton()
     }
 
 }

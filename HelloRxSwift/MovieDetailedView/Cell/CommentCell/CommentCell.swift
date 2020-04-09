@@ -51,6 +51,14 @@ class CommentCell: UITableViewCell,CellConfigurable,CellExpandable {
         }
     }
     
+    func showSkeleton() {
+        [photoImageView,nameLabel,dateLabel,usefulCountLabel,commentLabel,expandBtn].forEach {$0?.showSkeleton()}
+    }
+    
+    func hideSkeleton() {
+        [photoImageView,nameLabel,dateLabel,usefulCountLabel,commentLabel,expandBtn].forEach {$0?.hideSkeleton()}
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         bag = DisposeBag()
