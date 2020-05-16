@@ -10,14 +10,14 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Moya
-import RxDataSources
+import SkeletonView
 
 class MovieDetailedViewController: UIViewController {
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private weak var loadingIndicatorView: LoadingIndicatorView!
     @IBOutlet private weak var technicalProblemView: TechnicalProblemView!
     
-    private let viewModel = MovieDetailedViewModel()
+    private var viewModel: MovieDetailedViewModel!
     private let bag = DisposeBag()
     
     lazy var refreshControl: RxRefreshControl = {
@@ -32,10 +32,11 @@ class MovieDetailedViewController: UIViewController {
     }
 }
 
-extension MovieDetailedViewController:UITableViewDataSource {
+extension MovieDetailedViewController:SkeletonTableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.output.sections.value[section].cellViewModels.count
+        let count = viewModel.output.sections.value[section].cellViewModels.count
+        return count > 0 ? count : 1
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -45,12 +46,20 @@ extension MovieDetailedViewController:UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: getCellIdentifier(for: indexPath.section), for: indexPath)
         if let cell = cell as? CellConfigurable {
-            let cellVM = viewModel.output.sections.value[indexPath.section].cellViewModels[indexPath.row]
-            cell.setup(viewModel: cellVM)
+            let cellVMs = viewModel.output.sections.value[indexPath.section].cellViewModels
+            guard cellVMs.count > 0 else {
+                cell.showSkeleton()
+                return cell as! UITableViewCell
+            }
+            cell.hideSkeleton()
+            cell.setup(viewModel: cellVMs[indexPath.row])
         }
         return setupCellBinding(cell, indexPath: indexPath)
     }
     
+    func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
+       return getCellIdentifier(for: indexPath.section)
+    }
 }
 
 extension MovieDetailedViewController:UITableViewDelegate {
@@ -71,7 +80,7 @@ extension MovieDetailedViewController:UITableViewDelegate {
 extension MovieDetailedViewController {
     
     func setMovieID(_ id:String) {
-        self.viewModel.setMovieID(id)
+        self.viewModel = MovieDetailedViewModel(withID: id)
     }
     
     private func setupUI() {
@@ -109,11 +118,6 @@ extension MovieDetailedViewController {
         }).disposed(by: bag)
         
         viewModel.output.movieTitle.bind(to: self.rx.title).disposed(by: bag)
-        
-        viewModel.output.loadingMovieIsFinished.drive(onNext: { [weak self] (isLoaded) in
-            guard let self = self else {return}
-            isLoaded ? self.loadingIndicatorView.stopAnimating() : self.loadingIndicatorView.startAnimating()
-        }).disposed(by: bag)
         
         viewModel.output.errorOccurred.map {!$0}.drive(technicalProblemView.rx.isHidden).disposed(by: bag)
         

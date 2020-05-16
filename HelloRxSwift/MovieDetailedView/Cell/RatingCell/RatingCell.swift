@@ -31,9 +31,17 @@ class RatingCell: UITableViewCell,CellConfigurable {
         }).disposed(by: bag)
     }
     
+    func showSkeleton() {
+        ratingStarView.showSkeleton()
+    }
+    
+    func hideSkeleton() {
+        ratingStarView.hideSkeleton()
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         bag = DisposeBag()
     }
-
+    
 }

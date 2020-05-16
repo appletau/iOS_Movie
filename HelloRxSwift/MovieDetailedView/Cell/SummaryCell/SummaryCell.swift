@@ -18,6 +18,11 @@ class SummaryCell: UITableViewCell,CellConfigurable,CellExpandable {
     var maxNumberOfLine = 3
     var bag = DisposeBag()
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        summaryLabel.skeletonLineSpacing = 20
+    }
+    
     func setup(viewModel: CellViewModel) {
         guard let vm = viewModel as? SummaryCellViewModel else {return}
         vm.output.summary.drive(summaryLabel.rx.text).disposed(by: bag)
@@ -39,6 +44,14 @@ class SummaryCell: UITableViewCell,CellConfigurable,CellExpandable {
             summaryLabel.numberOfLines = maxNumberOfLine
             expandBtn.setTitle("展開", for: .normal)
         }
+    }
+    
+    func showSkeleton() {
+        summaryLabel.showSkeleton()
+    }
+    
+    func hideSkeleton() {
+        summaryLabel.hideSkeleton()
     }
     
     override func prepareForReuse() {

@@ -10,6 +10,7 @@ target 'HelloRxSwift' do
   pod 'RxCocoa'
   pod 'RxDataSources', '~> 4.0'
   pod 'Moya/RxSwift', '~> 14.0'
+  pod "SkeletonView"
   # Pods for HelloRxSwift
 
 end

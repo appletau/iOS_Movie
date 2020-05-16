@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Moya
+import SkeletonView
 
 class MovieListViewController: UIViewController {
     
@@ -41,6 +42,7 @@ class MovieListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
         setupUI()
         registerCell()
         binding()
@@ -49,6 +51,28 @@ class MovieListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+}
+
+extension MovieListViewController: SkeletonTableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let count = viewModel.output.movieListCellVMsRelay.value.count
+        return count > 0 ? count : 4
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MovieListCell.identifier, for: indexPath) as! MovieListCell
+        if viewModel.output.movieListCellVMsRelay.value.count > 0 {
+            cell.hideSkeleton()
+            cell.setup(viewModel: viewModel.output.movieListCellVMsRelay.value[indexPath.row])
+        } else {
+            cell.showSkeleton()
+        }
+        return cell
+    }
+    
+    func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
+       return MovieListCell.identifier
     }
 }
 
@@ -62,7 +86,7 @@ extension MovieListViewController {
     }
     
     private func registerCell() {
-        tableView.register(UINib(nibName: String(describing: MovieListCell.self), bundle: nil), forCellReuseIdentifier: String(describing: MovieListCell.self))
+        tableView.register(UINib(nibName: MovieListCell.identifier, bundle: nil), forCellReuseIdentifier: MovieListCell.identifier)
     }
     
     private func binding() {
@@ -76,14 +100,9 @@ extension MovieListViewController {
             self.navigationController?.pushViewController(vc, animated: false)
         }).disposed(by: bag)
         
-        viewModel.output.movieListCellVMsRelay.bind(to: tableView.rx.items(cellIdentifier: MovieListCell.identifier, cellType: MovieListCell.self)) { (row, element, cell) in
-            cell.setup(viewModel: element)
-        }.disposed(by: bag)
-        
-        viewModel.output.loadingMovieListIsFinished.drive(onNext: { [weak self] (isLoaded) in
-            guard let self = self else {return}
-            isLoaded ? self.loadingIndicatorView.stopAnimating() : self.loadingIndicatorView.startAnimating()
-        }).disposed(by: bag)
+        viewModel.output.movieListCellVMsRelay.subscribe(onNext: { [weak self] (_) in
+            self?.tableView.reloadData()
+            }).disposed(by: bag)
         
         viewModel.output.errorOccurred.map {!$0}.drive(technicalProblemView.rx.isHidden).disposed(by: bag)
     }

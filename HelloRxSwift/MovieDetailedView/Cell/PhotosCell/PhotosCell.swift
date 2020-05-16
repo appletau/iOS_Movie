@@ -34,8 +34,18 @@ class PhotosCell: UITableViewCell,CellConfigurable {
         } ).disposed(by: bag)
     }
     
+    func showSkeleton() {
+        
+    }
+    
+    func hideSkeleton() {
+        
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
+        cellViewModels = []
+        collectionView.reloadData()
         bag = DisposeBag()
     }
 }
@@ -48,6 +58,11 @@ extension PhotosCell:UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotosCollectionViewCell.identifier,for: indexPath)
+        guard cellViewModels.count > 0 else {
+            cell.showSkeleton()
+            return cell
+        }
+        cell.hideSkeleton()
         if let cell = cell as? PhotosCollectionViewCell {cell.setup(viewModel: cellViewModels[indexPath.row])}
         return cell
     }

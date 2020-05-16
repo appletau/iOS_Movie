@@ -15,7 +15,6 @@ class CelebrityCell: UITableViewCell,CellConfigurable {
     @IBOutlet private weak var collectionView: UICollectionView!
     
     static let identifier = String(describing: CelebrityCell.self)
-    var celebrities:Array<Celebrity> = []
     private var bag = DisposeBag()
     private var cellViewModels:[CelebrityCollectionCellViewModel] = []
     
@@ -35,8 +34,18 @@ class CelebrityCell: UITableViewCell,CellConfigurable {
         }).disposed(by: bag)
     }
     
+    func showSkeleton() {
+        
+    }
+    
+    func hideSkeleton() {
+        
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
+        cellViewModels = []
+        collectionView.reloadData()
         bag = DisposeBag()
     }
 }
@@ -44,11 +53,17 @@ class CelebrityCell: UITableViewCell,CellConfigurable {
 extension CelebrityCell:UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return cellViewModels.count
+        
+        return cellViewModels.count > 0 ? cellViewModels.count : 4
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CelebrityCollectionViewCell.identifier,for: indexPath)
+        guard cellViewModels.count > 0 else {
+            cell.showSkeleton()
+            return cell
+        }
+        cell.hideSkeleton()
         if let cell = cell as? CelebrityCollectionViewCell {cell.setup(viewModel: cellViewModels[indexPath.row])}
         return cell
     }

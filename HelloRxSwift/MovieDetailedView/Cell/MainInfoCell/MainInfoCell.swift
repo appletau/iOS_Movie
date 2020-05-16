@@ -33,6 +33,14 @@ class MainInfoCell: UITableViewCell,CellConfigurable {
         }).disposed(by: bag)
     }
     
+    func showSkeleton() {
+        [directorsLabel,castsLabel,CategoryLabel,publishDateLabel,contriesLabel,movieImageView].forEach {$0?.showSkeleton()}
+    }
+    
+    func hideSkeleton() {
+        [directorsLabel,castsLabel,CategoryLabel,publishDateLabel,contriesLabel,movieImageView].forEach {$0?.hideSkeleton()}
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         bag = DisposeBag()

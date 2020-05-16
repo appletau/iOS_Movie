@@ -17,18 +17,24 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VEb-eZ-t1Z" customClass="CosmosView" customModule="HelloRxSwift" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <rect key="frame" x="5" y="20" width="310" height="19"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                        </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="VEb-eZ-t1Z" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="PGv-bW-2vd"/>
-                    <constraint firstItem="VEb-eZ-t1Z" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="fFa-5V-JkM"/>
-                    <constraint firstAttribute="trailing" secondItem="VEb-eZ-t1Z" secondAttribute="trailing" id="ktJ-fH-YSQ"/>
-                    <constraint firstAttribute="bottom" secondItem="VEb-eZ-t1Z" secondAttribute="bottom" id="lOA-KY-gwh"/>
+                    <constraint firstItem="VEb-eZ-t1Z" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="20" id="PGv-bW-2vd"/>
+                    <constraint firstItem="VEb-eZ-t1Z" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="5" id="fFa-5V-JkM"/>
+                    <constraint firstAttribute="trailing" secondItem="VEb-eZ-t1Z" secondAttribute="trailing" constant="5" id="ktJ-fH-YSQ"/>
+                    <constraint firstAttribute="bottom" secondItem="VEb-eZ-t1Z" secondAttribute="bottom" constant="5" id="lOA-KY-gwh"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+            </userDefinedRuntimeAttributes>
             <connections>
                 <outlet property="ratingStarView" destination="VEb-eZ-t1Z" id="DWJ-qC-YA2"/>
             </connections>

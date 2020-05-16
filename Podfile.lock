@@ -19,6 +19,7 @@ PODS:
   - RxRelay (5.1.0):
     - RxSwift (~> 5)
   - RxSwift (5.1.0)
+  - SkeletonView (1.8.7)
 
 DEPENDENCIES:
   - Kingfisher
@@ -26,6 +27,7 @@ DEPENDENCIES:
   - RxCocoa
   - RxDataSources (~> 4.0)
   - RxSwift
+  - SkeletonView
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -38,6 +40,7 @@ SPEC REPOS:
     - Differentiator
     - Kingfisher
     - RxDataSources
+    - SkeletonView
 
 SPEC CHECKSUMS:
   Alamofire: 0fe5fd24b4298dc377a6550da7d5f1b30e286fcb
@@ -48,7 +51,8 @@ SPEC CHECKSUMS:
   RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
   RxRelay: a168bd6caf712d00c676ac344e9295afc93b418e
   RxSwift: ad5874f24bb0dbffd1e9bb8443604e3578796c7a
+  SkeletonView: ba5370f41280b2f0a76918bb143c1294232bb4f4
 
-PODFILE CHECKSUM: 27169004c68c09698c55948f1eac2a7f577a31fb
+PODFILE CHECKSUM: 27fd8a63e42da74bee539a2f1107117b8566a27c
 
 COCOAPODS: 1.9.1

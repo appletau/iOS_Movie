@@ -27,44 +27,77 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="120" id="t9z-A3-3kJ"/>
                                         </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
                                     </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="GLK-yg-iW1">
-                                        <rect key="frame" x="128" y="0.0" width="65" height="166"/>
+                                        <rect key="frame" x="128" y="5" width="100" height="156"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="片名" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ROt-cK-ytc">
-                                                <rect key="frame" x="0.0" y="0.0" width="65" height="30.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="100" height="28"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="ESf-AS-6AB"/>
+                                                </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="linesCornerRadius">
+                                                        <integer key="value" value="10"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="類型：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6p4-m2-Cr5">
-                                                <rect key="frame" x="0.0" y="45.5" width="65" height="30"/>
+                                                <rect key="frame" x="0.0" y="43" width="100" height="27.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="linesCornerRadius">
+                                                        <integer key="value" value="10"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="上映日期:：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V6b-xg-zj8">
-                                                <rect key="frame" x="0.0" y="90.5" width="65" height="30.5"/>
+                                                <rect key="frame" x="0.0" y="85.5" width="100" height="28"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="linesCornerRadius">
+                                                        <integer key="value" value="10"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="片長：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RiM-Xf-se1">
-                                                <rect key="frame" x="0.0" y="136" width="65" height="30"/>
+                                                <rect key="frame" x="0.0" y="128.5" width="100" height="27.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="linesCornerRadius">
+                                                        <integer key="value" value="10"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="skeletonLineSpacing">
+                                                        <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
                                         </subviews>
                                     </stackView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
-                                    <constraint firstItem="GLK-yg-iW1" firstAttribute="top" secondItem="hB5-LX-HII" secondAttribute="top" id="7Ne-RX-OZU"/>
-                                    <constraint firstItem="lKO-Ci-CkK" firstAttribute="top" secondItem="hB5-LX-HII" secondAttribute="top" id="B2D-iq-jbU"/>
+                                    <constraint firstItem="GLK-yg-iW1" firstAttribute="top" secondItem="hB5-LX-HII" secondAttribute="top" constant="5" id="7Ne-RX-OZU"/>
+                                    <constraint firstItem="lKO-Ci-CkK" firstAttribute="centerY" secondItem="GLK-yg-iW1" secondAttribute="centerY" id="BOU-DI-l0e"/>
+                                    <constraint firstItem="lKO-Ci-CkK" firstAttribute="height" secondItem="hB5-LX-HII" secondAttribute="height" id="eob-5p-dDE"/>
                                     <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="GLK-yg-iW1" secondAttribute="trailing" constant="253" id="hcQ-MV-GzG"/>
-                                    <constraint firstAttribute="bottom" secondItem="lKO-Ci-CkK" secondAttribute="bottom" id="iEQ-GL-uoM"/>
-                                    <constraint firstAttribute="bottom" secondItem="GLK-yg-iW1" secondAttribute="bottom" id="lRZ-Wy-uaa"/>
+                                    <constraint firstAttribute="bottom" secondItem="GLK-yg-iW1" secondAttribute="bottom" constant="5" id="lRZ-Wy-uaa"/>
                                     <constraint firstItem="GLK-yg-iW1" firstAttribute="leading" secondItem="lKO-Ci-CkK" secondAttribute="trailing" constant="8" id="sTz-LK-4vc"/>
                                     <constraint firstItem="lKO-Ci-CkK" firstAttribute="leading" secondItem="hB5-LX-HII" secondAttribute="leading" id="xrI-47-sgs"/>
                                 </constraints>
@@ -87,6 +120,9 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+            </userDefinedRuntimeAttributes>
             <connections>
                 <outlet property="categoryLabel" destination="6p4-m2-Cr5" id="Syj-nY-1VO"/>
                 <outlet property="cornerView" destination="hB5-LX-HII" id="gyf-S5-Qil"/>
